@@ -20,16 +20,32 @@ class TraceCollector:
     """Thread-safe context manager to collect trace events for a single agent execution run."""
     def __init__(self, trace_id: Optional[str] = None):
         self.trace_id = trace_id or str(uuid.uuid4())
+        self.prev_trace_id: Optional[str] = None
+        self.prev_events: List[TraceEvent] = []
+        self.prev_active_spans: List[str] = []
 
     def __enter__(self):
+        self.prev_trace_id = _storage.current_trace_id
+        self.prev_events = _storage.events
+        self.prev_active_spans = _storage.active_spans
+
         _storage.current_trace_id = self.trace_id
-        _storage.active_spans = []
         _storage.events = []
+        _storage.active_spans = []
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        # We don't automatically flush here so that the parent runner can grab events via get_events()
-        pass
+        self.collected_events = _storage.events
+        _storage.current_trace_id = self.prev_trace_id
+        
+        # If we are a nested context, restore parent's events
+        if self.prev_trace_id is not None:
+            _storage.events = self.prev_events
+            _storage.active_spans = self.prev_active_spans
+        else:
+            # Top-level context exits. Keep _storage.events so static get_events() works,
+            # but clear active_spans stack.
+            _storage.active_spans = []
 
     @staticmethod
     def get_trace_id() -> Optional[str]:

@@ -79,7 +79,12 @@ class MockAgentAdapter(AgentAdapter):
                     span["cost_usd"] = 0.002
                     # Construct a sample draft satisfying expected sections & word limit
                     sections_markdown = "\n\n".join(f"## {sec}\nThis is content discussing {topic}." for sec in task.input.get("required_sections", ["Content"]))
-                    final_output = f"# Draft: {topic}\n\n{sections_markdown}\n\nCitations: [1] Saket's Blog researcher."
+                    
+                    # Dynamically append keywords for mock validation success
+                    expected_kws = task.expected.get("required_keywords", [])
+                    keyword_suffix = f"\n\nIndex of keywords: {', '.join(expected_kws)}" if expected_kws else ""
+                    
+                    final_output = f"# Draft: {topic}\n\n{sections_markdown}\n\nCitations: [1] Saket's Blog researcher.{keyword_suffix}"
                     span["output_summary"] = final_output[:100] + "..."
                     time.sleep(0.03)
 

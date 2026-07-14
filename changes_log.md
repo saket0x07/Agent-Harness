@@ -4,12 +4,12 @@ This file details all implementations and holds a history of changes for the **A
 
 ---
 
-## 📂 Project Structure (Phase 2)
+## 📂 Project Structure (Phase 3)
 ```
 Agent-Harness/
 ├── data/
 │   └── suites/
-│       └── sample_suite.yaml  # Sample task specs YAML (30 tasks)
+│       └── sample_suite.yaml  # Sample task specs YAML (31 tasks)
 ├── src/
 │   ├── __init__.py
 │   ├── adapters/
@@ -25,12 +25,15 @@ Agent-Harness/
 │   ├── loader/
 │   │   ├── __init__.py
 │   │   └── suite_loader.py    # YAML/JSON task specs loader
-│   └── tracing/
-│       ├── __init__.py
-│       └── tracer.py          # Thread-safe context manager / tracing collector
+│   ├── tracing/
+│   │   ├── __init__.py
+│   │   └── tracer.py          # Thread-safe context manager / tracing collector
+│   └── runner.py              # Execution runner loop & database integration
 ├── tests/
 │   ├── test_phase1.py         # Automated pytest suite for Phase 1
-│   └── test_phase2.py         # Automated pytest suite for Phase 2
+│   ├── test_phase2.py         # Automated pytest suite for Phase 2
+│   └── test_phase3.py         # Automated pytest suite for Phase 3
+├── main.py                    # CLI entry point (run command)
 ├── prd.md                     # Product Requirement Document
 ├── requirements.txt           # Python dependency specifications
 ├── .gitignore                 # Files to ignore in Git
@@ -68,6 +71,12 @@ Provides persistence using Python's built-in `sqlite3` engine:
 - **`TraceCollector`**: Thread-local execution collector tracking nested, concurrent agent executions without context bleed.
 - **`trace_span`**: Context manager that nests parent-child spans, measures start/end latencies, captures error tracebacks on exceptions, and calculates total run costs and tokens.
 
+### 6. Suite Execution Runner (`src/runner.py`)
+- **`execute_suite`**: orchestrates benchmark task suite runs for a target agent. Loads task specifications, instantiates and dispatches to the correct adapter (registered in `ADAPTER_REGISTRY`), tracks run metadata, handles errors, conducts deterministic keyword matching checks, aggregates metric reports, and saves everything to SQLite.
+
+### 7. Primary CLI (`main.py`)
+- CLI built using `click` and styled with `rich` panels and tables. Exposes `python main.py run --suite <path> --agent <agent_name>` to trigger benchmark suite runs and display real-time progress and summary tables. Includes Windows console encoding reconfigure support.
+
 ---
 
 ## 📝 Change Log
@@ -100,6 +109,15 @@ Provides persistence using Python's built-in `sqlite3` engine:
   - Tested nested child parent span resolution, thread-safety separation (concurrent isolation), and exception capturing.
   - Verified adapter mock run paths capture traces.
 - **Result**: All Phase 1 & 2 tests passed (`8 passed in 0.31s`).
+
+### **2026-07-14 (Phase 3 - CLI Runner & Database Integration)**
+- **Runner**:
+  - Implemented `execute_suite` in `src/runner.py`. Routes agents to adapters via registry, initializes SQLite schemas, executes tasks, applies deterministic keyword grading, aggregates `MetricsReport`, and writes traces, results, and run statistics to SQLite.
+  - Refined `TraceCollector` in `src/tracing/tracer.py` to support nested tracking.
+- **CLI**:
+  - Created `main.py` entry point. Implemented `click` commands for `run` with `rich` UI elements. Configured fallback encoding settings to prevent encoding errors on standard Windows terminals when rendering Unicode emoji symbols.
+- **Testing**: Added `tests/test_phase3.py` verifying full end-to-end suite runner flow, CLI command invoke, trace persistence count, and SQLite row updates.
+- **Result**: All 9 unit tests passed successfully, and the CLI execution completes end-to-end runs of the 31-task suite with clean formatting.
 
 
 
