@@ -96,43 +96,34 @@ def execute_suite(
         trace_dicts = [event.model_dump() for event in result.trace]
         save_trace_events(trace_dicts, db_path=db_path)
         
-        # Phase 3 Deterministic grading logic (Keyword verification)
-        expected_keywords = task.expected.get("required_keywords", [])
-        is_pass = True
-        det_checks = {}
-        for kw in expected_keywords:
-            present = kw.lower() in str(result.final_output).lower()
-            det_checks[f"keyword_{kw}_present"] = present
-            if not present:
-                is_pass = False
-
-        if is_pass:
+        # Phase 4 Grader Engine integration
+        from src.grading.grader import GraderEngine
+        grader = GraderEngine(task)
+        grading_res = grader.grade(result)
+        
+        # Ensure trace_id matches the run session
+        grading_res.trace_id = trace_id
+        
+        if grading_res.is_pass:
             passed_tasks_count += 1
-            print(f"  ✅ Pass (Deterministic keyword validation)")
+            print(f"  ✅ Pass")
         else:
-            print(f"  ❌ Fail (Missing expected keywords)")
-            # Standard failure classification for missing keyword
-            failure_mode = "missed_issue"
-            failure_mode_counts[failure_mode] = failure_mode_counts.get(failure_mode, 0) + 1
-            
-        grading_res = GradingResult(
-            task_id=task.task_id,
-            trace_id=trace_id,
-            deterministic=det_checks,
-            llm_judge=None,
-            trajectory={"total_spans": len(result.trace)},
-            is_pass=is_pass
-        )
+            fail_reason = grading_res.trajectory.get("failure_mode") or "failed validation checks"
+            print(f"  ❌ Fail (Reason: {fail_reason})")
+            failure_mode = grading_res.trajectory.get("failure_mode")
+            if failure_mode:
+                failure_mode_counts[failure_mode] = failure_mode_counts.get(failure_mode, 0) + 1
+                
         grading_results.append(grading_res)
         
         # Save grading outcomes to database
         save_grading_result(
             task_id=task.task_id,
             trace_id=trace_id,
-            deterministic=det_checks,
-            llm_judge=None,
-            trajectory={"total_spans": len(result.trace)},
-            is_pass=is_pass,
+            deterministic=grading_res.deterministic,
+            llm_judge=grading_res.llm_judge,
+            trajectory=grading_res.trajectory,
+            is_pass=grading_res.is_pass,
             db_path=db_path
         )
         print(f"  ⏱️ Latency: {result.total_latency_ms}ms | 💳 Cost: ${result.total_cost_usd:.5f}\n")

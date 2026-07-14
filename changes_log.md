@@ -4,12 +4,14 @@ This file details all implementations and holds a history of changes for the **A
 
 ---
 
-## 📂 Project Structure (Phase 3)
+## 📂 Project Structure (Phase 4)
 ```
 Agent-Harness/
 ├── data/
 │   └── suites/
 │       └── sample_suite.yaml  # Sample task specs YAML (31 tasks)
+├── scripts/
+│   └── calibrate_judge.py     # Script to calibrate LLM judge MAE error delta
 ├── src/
 │   ├── __init__.py
 │   ├── adapters/
@@ -28,11 +30,16 @@ Agent-Harness/
 │   ├── tracing/
 │   │   ├── __init__.py
 │   │   └── tracer.py          # Thread-safe context manager / tracing collector
+│   ├── grading/
+│   │   ├── __init__.py
+│   │   ├── grader.py          # GraderEngine orchestrator (det + trajectory)
+│   │   └── llm_judge.py       # Subjective rubric rating via google.genai
 │   └── runner.py              # Execution runner loop & database integration
 ├── tests/
 │   ├── test_phase1.py         # Automated pytest suite for Phase 1
 │   ├── test_phase2.py         # Automated pytest suite for Phase 2
-│   └── test_phase3.py         # Automated pytest suite for Phase 3
+│   ├── test_phase3.py         # Automated pytest suite for Phase 3
+│   └── test_phase4.py         # Automated pytest suite for Phase 4
 ├── main.py                    # CLI entry point (run command)
 ├── prd.md                     # Product Requirement Document
 ├── requirements.txt           # Python dependency specifications
@@ -77,6 +84,13 @@ Provides persistence using Python's built-in `sqlite3` engine:
 ### 7. Primary CLI (`main.py`)
 - CLI built using `click` and styled with `rich` panels and tables. Exposes `python main.py run --suite <path> --agent <agent_name>` to trigger benchmark suite runs and display real-time progress and summary tables. Includes Windows console encoding reconfigure support.
 
+### 8. Grading Engine (`src/grading/`)
+- **`GraderEngine` (`grader.py`)**: Central grading orchestrator conducting deterministic audits (checks required keywords, count headings/sections, and parses citations for bracket tags or hyperlinks) and path checks (finds repeating tool-call loops and premature terminations).
+- **`llm_judge.py`**: Invokes modern Google `gemini-2.5-flash` model via the `google.genai` SDK using strict Pydantic JSON schema configurations (`JudgeScore`). Returns fallback scores if `GEMINI_API_KEY` environment variable is not populated.
+
+### 9. Judge Calibration Utility (`scripts/calibrate_judge.py`)
+- Standard CLI script designed to import the LLM judge and calculate its Mean Absolute Error (MAE) score against manual, human-graded scores on baseline write-ups. Resolves console Unicode errors on Windows systems.
+
 ---
 
 ## 📝 Change Log
@@ -118,6 +132,20 @@ Provides persistence using Python's built-in `sqlite3` engine:
   - Created `main.py` entry point. Implemented `click` commands for `run` with `rich` UI elements. Configured fallback encoding settings to prevent encoding errors on standard Windows terminals when rendering Unicode emoji symbols.
 - **Testing**: Added `tests/test_phase3.py` verifying full end-to-end suite runner flow, CLI command invoke, trace persistence count, and SQLite row updates.
 - **Result**: All 9 unit tests passed successfully, and the CLI execution completes end-to-end runs of the 31-task suite with clean formatting.
+
+### **2026-07-14 (Phase 4 - Deterministic & LLM-as-Judge Grading Engine)**
+- **Grader Engine**:
+  - Implemented `GraderEngine` inside `src/grading/grader.py` conducting keyword presence checks, markdown heading section counts, and citation format verification (brackets/links).
+  - Built trajectory auditing identifying repeating tool invocation loops (consecutive tool+args >= 3) and premature shutdowns.
+  - Integrated `GraderEngine` into `src/runner.py` task execution loops.
+- **LLM Judge**:
+  - Built `llm_judge.py` using `google.genai` SDK and Pydantic schemas for structured grading inputs via Gemini.
+  - Added offline mock fallback when `GEMINI_API_KEY` is not present in the shell.
+- **Calibration**:
+  - Created `scripts/calibrate_judge.py` comparing LLM judge metrics against manual annotations and compiling MAE delta reports.
+- **Testing**:
+  - Created `tests/test_phase4.py` verifying keyword triggers, citation searches, loop traces, premature timeouts, and offline score responses.
+- **Result**: All 15 unit tests pass successfully, and calibration metrics execute with zero warning flags.
 
 
 

@@ -1,0 +1,22 @@
+[
+  {
+    "task_id": "blog_tech_001",
+    "topic": "Model Context Protocol",
+    "agent_output": "# Draft: Model Context Protocol\n\nThis is an intro section to Model Context Protocol.\nHere we describe client and server communication.\nCitations: [1] MCP standard.",
+    "human_scores": {
+      "clarity": 4,
+      "accuracy": 5,
+      "completeness": 3
+    }
+  },
+  {
+    "task_id": "blog_tech_002",
+    "topic": "LangGraph vs LangChain",
+    "agent_output": "LangGraph uses graph state loops. LangChain is linear chains. It is simple but powerful.",
+    "human_scores": {
+      "clarity": 3,
+      "accuracy": 4,
+      "completeness": 2
+    }
+  }
+]
