@@ -1,0 +1,1087 @@
+tasks:
+  # Tech & AI Topics (10 tasks)
+  - task_id: "blog_tech_001"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Model Context Protocol (MCP) and its impact on Local AI Development"
+      target_audience: "Software Developers and DevOps Engineers"
+      required_sections:
+        - "Introduction to MCP"
+        - "How it Works (Client-Server Architecture)"
+        - "Practical Use Cases"
+        - "Future Outlook"
+      min_words: 800
+    expected:
+      required_keywords:
+        - "model context protocol"
+        - "client"
+        - "server"
+        - "claude"
+        - "tool"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+      - "llm_judge_structure_flow"
+    difficulty: "medium"
+    tags:
+      - "tech"
+      - "mcp"
+      - "research"
+
+  - task_id: "blog_tech_002"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "LangGraph vs LangChain: Choosing the Right Framework for AI Applications"
+      target_audience: "Python Developers and AI Engineers"
+      required_sections:
+        - "Framework Overview"
+        - "Architecture Comparison"
+        - "Performance Metrics"
+        - "Use Case Recommendations"
+      min_words: 750
+    expected:
+      required_keywords:
+        - "langgraph"
+        - "langchain"
+        - "agentic"
+        - "workflow"
+        - "python"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+      - "llm_judge_unbiased_comparison"
+    difficulty: "medium"
+    tags:
+      - "tech"
+      - "framework"
+      - "ai-dev"
+
+  - task_id: "blog_tech_003"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Retrieval Augmented Generation (RAG): Building Smarter AI Applications"
+      target_audience: "AI Practitioners and NLP Enthusiasts"
+      required_sections:
+        - "What is RAG?"
+        - "RAG Architecture Components"
+        - "Implementation Strategies"
+        - "Real-World Applications"
+        - "Challenges and Solutions"
+      min_words: 900
+    expected:
+      required_keywords:
+        - "retrieval augmented generation"
+        - "rag"
+        - "embedding"
+        - "vector database"
+        - "llm"
+      min_sections: 5
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_depth"
+      - "llm_judge_practical_examples"
+    difficulty: "medium"
+    tags:
+      - "tech"
+      - "rag"
+      - "nlp"
+
+  - task_id: "blog_tech_004"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Fine-tuning Large Language Models vs Prompt Engineering: A Practical Analysis"
+      target_audience: "ML Engineers and Data Scientists"
+      required_sections:
+        - "Fundamentals Explained"
+        - "Cost-Benefit Analysis"
+        - "When to Use Each Approach"
+        - "Implementation Guide"
+      min_words: 800
+    expected:
+      required_keywords:
+        - "fine-tuning"
+        - "prompt engineering"
+        - "llm"
+        - "training"
+        - "optimization"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+      - "llm_judge_analytical_depth"
+    difficulty: "high"
+    tags:
+      - "tech"
+      - "ml"
+      - "llm"
+
+  - task_id: "blog_tech_005"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Building Multimodal AI Applications: Text, Vision, and Audio Integration"
+      target_audience: "Full-Stack AI Developers"
+      required_sections:
+        - "Multimodal AI Overview"
+        - "Vision-Language Models"
+        - "Integration Patterns"
+        - "Production Considerations"
+      min_words: 900
+    expected:
+      required_keywords:
+        - "multimodal"
+        - "vision"
+        - "language"
+        - "integration"
+        - "api"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+      - "llm_judge_code_relevance"
+    difficulty: "high"
+    tags:
+      - "tech"
+      - "ai"
+      - "multimodal"
+
+  - task_id: "blog_tech_006"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Streaming and Real-time AI: Processing Data at Scale with Agents"
+      target_audience: "Backend Engineers and Data Architects"
+      required_sections:
+        - "Streaming Fundamentals"
+        - "Real-time Processing Architecture"
+        - "Agentic Streaming Patterns"
+        - "Scalability Considerations"
+      min_words: 850
+    expected:
+      required_keywords:
+        - "streaming"
+        - "real-time"
+        - "agent"
+        - "scalability"
+        - "processing"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+      - "llm_judge_architectural_thinking"
+    difficulty: "high"
+    tags:
+      - "tech"
+      - "streaming"
+      - "architecture"
+
+  - task_id: "blog_tech_007"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Prompt Injection Attacks: Security in AI Applications"
+      target_audience: "Security Professionals and AI Developers"
+      required_sections:
+        - "Understanding Prompt Injection"
+        - "Attack Vectors and Examples"
+        - "Defense Strategies"
+        - "Testing and Validation"
+      min_words: 750
+    expected:
+      required_keywords:
+        - "prompt injection"
+        - "security"
+        - "attack"
+        - "defense"
+        - "validation"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_security_relevance"
+      - "llm_judge_practical_solutions"
+    difficulty: "medium"
+    tags:
+      - "tech"
+      - "security"
+      - "ai"
+
+  - task_id: "blog_tech_008"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Cost Optimization Strategies for Large Language Model APIs"
+      target_audience: "Startup Founders and Product Managers"
+      required_sections:
+        - "Cost Breakdown of LLM APIs"
+        - "Optimization Techniques"
+        - "Caching and Batching Strategies"
+        - "ROI Analysis"
+      min_words: 700
+    expected:
+      required_keywords:
+        - "cost optimization"
+        - "llm api"
+        - "pricing"
+        - "batching"
+        - "caching"
+      min_sections: 4
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_business_relevance"
+      - "llm_judge_practical_value"
+    difficulty: "medium"
+    tags:
+      - "tech"
+      - "cost-optimization"
+      - "business"
+
+  - task_id: "blog_tech_009"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Evaluating and Benchmarking AI Model Performance in Production"
+      target_audience: "ML Researchers and DevOps Engineers"
+      required_sections:
+        - "Key Metrics and Frameworks"
+        - "Benchmarking Methodologies"
+        - "Production Monitoring"
+        - "Continuous Improvement"
+      min_words: 800
+    expected:
+      required_keywords:
+        - "benchmark"
+        - "evaluation"
+        - "metrics"
+        - "production"
+        - "monitoring"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_rigor"
+      - "llm_judge_practical_frameworks"
+    difficulty: "high"
+    tags:
+      - "tech"
+      - "ml"
+      - "evaluation"
+
+  - task_id: "blog_tech_010"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Open Source AI Models vs Commercial APIs: Trade-offs and Decision Framework"
+      target_audience: "Enterprise Architects and CTOs"
+      required_sections:
+        - "Landscape Overview"
+        - "Technical Comparison"
+        - "Cost and Maintenance Analysis"
+        - "Decision Matrix"
+      min_words: 850
+    expected:
+      required_keywords:
+        - "open source"
+        - "api"
+        - "model"
+        - "trade-off"
+        - "enterprise"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_strategic_thinking"
+      - "llm_judge_comprehensive_analysis"
+    difficulty: "high"
+    tags:
+      - "tech"
+      - "strategy"
+      - "ai"
+
+  # Finance & Market Topics (7 tasks)
+  - task_id: "blog_finance_001"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Impact of 2026 Interest Rate Decisions on Tech Stocks"
+      target_audience: "Retail Investors"
+      required_sections:
+        - "Executive Summary"
+        - "Tech Sector Reaction"
+        - "Investor Recommendations"
+      min_words: 600
+    expected:
+      required_keywords:
+        - "interest rates"
+        - "tech stock"
+        - "inflation"
+        - "market"
+      min_sections: 3
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_financial_relevance"
+    difficulty: "hard"
+    tags:
+      - "finance"
+      - "macroeconomics"
+      - "market-analysis"
+
+  - task_id: "blog_finance_002"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "AI Investment Trends: Where Venture Capital is Flowing in 2026"
+      target_audience: "Investors and Entrepreneurs"
+      required_sections:
+        - "Industry Overview"
+        - "Top Sectors Attracting Investment"
+        - "Key Players and Startups"
+        - "Future Predictions"
+      min_words: 750
+    expected:
+      required_keywords:
+        - "venture capital"
+        - "ai investment"
+        - "startup"
+        - "trend"
+        - "sector"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_market_insight"
+      - "llm_judge_data_accuracy"
+    difficulty: "hard"
+    tags:
+      - "finance"
+      - "startup"
+      - "investment"
+
+  - task_id: "blog_finance_003"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Cryptocurrency and Blockchain: Regulatory Landscape in 2026"
+      target_audience: "Crypto Traders and Policy Analysts"
+      required_sections:
+        - "Current Regulatory Status"
+        - "Major Policy Changes"
+        - "Impact on Market"
+        - "Future Implications"
+      min_words: 700
+    expected:
+      required_keywords:
+        - "cryptocurrency"
+        - "blockchain"
+        - "regulation"
+        - "policy"
+        - "market"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_policy_understanding"
+      - "llm_judge_neutrality"
+    difficulty: "high"
+    tags:
+      - "finance"
+      - "crypto"
+      - "regulation"
+
+  - task_id: "blog_finance_004"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Stock Market Predictions: How to Evaluate Analyst Forecasts"
+      target_audience: "Individual Investors and Finance Students"
+      required_sections:
+        - "Forecast Accuracy History"
+        - "Methods and Methodologies"
+        - "Critical Evaluation Framework"
+        - "Investment Strategy Implications"
+      min_words: 650
+    expected:
+      required_keywords:
+        - "stock market"
+        - "forecast"
+        - "analyst"
+        - "prediction"
+        - "accuracy"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_analytical_depth"
+      - "llm_judge_educational_value"
+    difficulty: "medium"
+    tags:
+      - "finance"
+      - "investment"
+      - "analysis"
+
+  - task_id: "blog_finance_005"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "ESG Investing: Performance, Impact, and Future Outlook"
+      target_audience: "Conscious Investors and Fund Managers"
+      required_sections:
+        - "ESG Fundamentals"
+        - "Performance Data"
+        - "Environmental Impact"
+        - "Industry Trends"
+      min_words: 750
+    expected:
+      required_keywords:
+        - "esg"
+        - "sustainability"
+        - "investing"
+        - "impact"
+        - "performance"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_financial_analysis"
+      - "llm_judge_impact_assessment"
+    difficulty: "medium"
+    tags:
+      - "finance"
+      - "sustainability"
+      - "investment"
+
+  - task_id: "blog_finance_006"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Inflation and Deflation Cycles: How They Affect Your Portfolio"
+      target_audience: "Long-term Investors and Wealth Managers"
+      required_sections:
+        - "Economic Cycles Explained"
+        - "Historical Patterns"
+        - "Portfolio Diversification"
+        - "Hedging Strategies"
+      min_words: 800
+    expected:
+      required_keywords:
+        - "inflation"
+        - "deflation"
+        - "portfolio"
+        - "cycle"
+        - "hedging"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_economic_understanding"
+      - "llm_judge_practical_strategies"
+    difficulty: "high"
+    tags:
+      - "finance"
+      - "economics"
+      - "investment"
+
+  - task_id: "blog_finance_007"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Global Supply Chain Disruptions and Their Economic Impact"
+      target_audience: "Business Analysts and Supply Chain Professionals"
+      required_sections:
+        - "Current Disruptions Overview"
+        - "Causes and Risk Factors"
+        - "Economic Consequences"
+        - "Mitigation Strategies"
+      min_words: 750
+    expected:
+      required_keywords:
+        - "supply chain"
+        - "disruption"
+        - "economic impact"
+        - "logistics"
+        - "risk"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_business_relevance"
+      - "llm_judge_data_driven"
+    difficulty: "medium"
+    tags:
+      - "finance"
+      - "supply-chain"
+      - "business"
+
+  # Product & Comparison Reviews (8 tasks)
+  - task_id: "blog_review_001"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Comparing Gemini 3.5 Flash vs Claude 3.5 Sonnet for Coding Agents"
+      target_audience: "AI Practitioners"
+      required_sections:
+        - "Introduction"
+        - "Performance Benchmarks"
+        - "Pricing Analysis"
+        - "Verdict"
+      min_words: 500
+    expected:
+      required_keywords:
+        - "gemini"
+        - "claude"
+        - "coding"
+        - "agent"
+        - "benchmark"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_unbiased_perspective"
+    difficulty: "medium"
+    tags:
+      - "ai"
+      - "review"
+      - "llm-comparison"
+
+  - task_id: "blog_review_002"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Best Vector Database Solutions: Pinecone vs Weaviate vs Milvus"
+      target_audience: "ML Engineers and Data Scientists"
+      required_sections:
+        - "Overview and Use Cases"
+        - "Performance Comparison"
+        - "Scalability and Architecture"
+        - "Pricing and Support"
+        - "Final Recommendations"
+      min_words: 800
+    expected:
+      required_keywords:
+        - "vector database"
+        - "pinecone"
+        - "weaviate"
+        - "milvus"
+        - "performance"
+      min_sections: 5
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+      - "llm_judge_unbiased_analysis"
+    difficulty: "high"
+    tags:
+      - "tech"
+      - "database"
+      - "comparison"
+
+  - task_id: "blog_review_003"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Cloud Providers Showdown: AWS vs Google Cloud vs Azure for AI Workloads"
+      target_audience: "Enterprise Architects and CTO"
+      required_sections:
+        - "AI Services Offerings"
+        - "Performance and Latency"
+        - "Cost Analysis"
+        - "Support and Documentation"
+        - "Recommendation Matrix"
+      min_words: 900
+    expected:
+      required_keywords:
+        - "aws"
+        - "google cloud"
+        - "azure"
+        - "ai"
+        - "performance"
+      min_sections: 5
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_depth"
+      - "llm_judge_unbiased_evaluation"
+    difficulty: "high"
+    tags:
+      - "tech"
+      - "cloud"
+      - "comparison"
+
+  - task_id: "blog_review_004"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Python vs Rust for Building AI Systems: A Developer's Guide"
+      target_audience: "Backend Developers and Performance Engineers"
+      required_sections:
+        - "Language Comparison"
+        - "Performance Benchmarks"
+        - "Development Speed vs Runtime"
+        - "Use Case Selection"
+      min_words: 700
+    expected:
+      required_keywords:
+        - "python"
+        - "rust"
+        - "performance"
+        - "development"
+        - "ai"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+      - "llm_judge_pragmatic_advice"
+    difficulty: "medium"
+    tags:
+      - "tech"
+      - "programming"
+      - "comparison"
+
+  - task_id: "blog_review_005"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Project Management Tools for Remote AI Teams: Comparison and Recommendations"
+      target_audience: "Engineering Managers and Team Leads"
+      required_sections:
+        - "Tools Overview"
+        - "Features Comparison"
+        - "Team Size and Budget Considerations"
+        - "Implementation Tips"
+      min_words: 650
+    expected:
+      required_keywords:
+        - "project management"
+        - "tool"
+        - "remote"
+        - "team"
+        - "collaboration"
+      min_sections: 4
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_practical_value"
+      - "llm_judge_comprehensiveness"
+    difficulty: "medium"
+    tags:
+      - "business"
+      - "management"
+      - "tools"
+
+  - task_id: "blog_review_006"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Monitoring and Observability Platforms: DataDog vs New Relic vs Datadog"
+      target_audience: "DevOps Engineers and SREs"
+      required_sections:
+        - "Platform Capabilities"
+        - "Integration Ecosystem"
+        - "Pricing Models"
+        - "Enterprise Features"
+      min_words: 750
+    expected:
+      required_keywords:
+        - "monitoring"
+        - "observability"
+        - "datadog"
+        - "new relic"
+        - "metrics"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+      - "llm_judge_enterprise_focus"
+    difficulty: "high"
+    tags:
+      - "tech"
+      - "devops"
+      - "comparison"
+
+  - task_id: "blog_review_007"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Top Headless CMS Platforms in 2026: Strapi vs Contentful vs Sanity"
+      target_audience: "Frontend Developers and Content Managers"
+      required_sections:
+        - "Introduction to Headless CMS"
+        - "Features & Developer Experience"
+        - "Pricing comparison"
+        - "Final Verdict"
+      min_words: 700
+    expected:
+      required_keywords:
+        - "headless cms"
+        - "strapi"
+        - "contentful"
+        - "sanity"
+        - "developer"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_practical_value"
+    difficulty: "medium"
+    tags:
+      - "tech"
+      - "cms"
+      - "comparison"
+
+  - task_id: "blog_review_008"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "No-SQL Databases comparison: MongoDB vs Cassandra vs DynamoDB"
+      target_audience: "Database Administrators and Systems Architects"
+      required_sections:
+        - "Data Model and Architecture"
+        - "Read/Write Performance"
+        - "Scaling and Sharding"
+        - "Recommendation Matrix"
+      min_words: 800
+    expected:
+      required_keywords:
+        - "mongodb"
+        - "cassandra"
+        - "dynamodb"
+        - "nosql"
+        - "scalability"
+      min_sections: 4
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+      - "llm_judge_unbiased_analysis"
+    difficulty: "high"
+    tags:
+      - "tech"
+      - "database"
+      - "nosql"
+
+  # Tutorials & How-To (4 tasks)
+  - task_id: "blog_tutorial_001"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Building Your First AI Agent with LangGraph: A Step-by-Step Tutorial"
+      target_audience: "Beginner Python Developers"
+      required_sections:
+        - "Prerequisites and Setup"
+        - "Core Concepts Explained"
+        - "Building Your First Agent"
+        - "Debugging and Optimization"
+        - "Next Steps"
+      min_words: 1000
+    expected:
+      required_keywords:
+        - "langgraph"
+        - "agent"
+        - "tutorial"
+        - "python"
+        - "setup"
+      min_sections: 5
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_clarity"
+      - "llm_judge_code_examples"
+    difficulty: "medium"
+    tags:
+      - "tutorial"
+      - "beginner"
+      - "langgraph"
+
+  - task_id: "blog_tutorial_002"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Deploying ML Models to Production: Containerization with Docker and Kubernetes"
+      target_audience: "Full-Stack ML Engineers"
+      required_sections:
+        - "Containerization Basics"
+        - "Docker Setup and Best Practices"
+        - "Kubernetes Orchestration"
+        - "Deployment Strategies"
+        - "Monitoring in Production"
+      min_words: 1100
+    expected:
+      required_keywords:
+        - "docker"
+        - "kubernetes"
+        - "deployment"
+        - "production"
+        - "container"
+      min_sections: 5
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_practical_steps"
+      - "llm_judge_completeness"
+    difficulty: "high"
+    tags:
+      - "tutorial"
+      - "devops"
+      - "deployment"
+
+  - task_id: "blog_tutorial_003"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Creating a RAG System with OpenAI and Pinecone: Complete Implementation Guide"
+      target_audience: "Intermediate AI Developers"
+      required_sections:
+        - "Architecture Overview"
+        - "Data Preparation and Embedding"
+        - "Vector Store Configuration"
+        - "Retrieval and Augmentation"
+        - "Deployment Considerations"
+      min_words: 1000
+    expected:
+      required_keywords:
+        - "rag"
+        - "pinecone"
+        - "openai"
+        - "embedding"
+        - "retrieval"
+      min_sections: 5
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+      - "llm_judge_code_quality"
+    difficulty: "high"
+    tags:
+      - "tutorial"
+      - "rag"
+      - "implementation"
+
+  - task_id: "blog_tutorial_004"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Securing Your Python Web APIs: Implementation of OAuth2 and JWT"
+      target_audience: "Backend Python Developers"
+      required_sections:
+        - "Introduction to Token Auth"
+        - "OAuth2 Flow Explained"
+        - "JWT Structure and Generation"
+        - "Coding the Authentication Middleware"
+        - "Security Checklist"
+      min_words: 1050
+    expected:
+      required_keywords:
+        - "oauth2"
+        - "jwt"
+        - "python"
+        - "security"
+        - "authentication"
+      min_sections: 5
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_clarity"
+      - "llm_judge_code_quality"
+    difficulty: "high"
+    tags:
+      - "tutorial"
+      - "security"
+      - "python"
+
+  # Industry & Trend Analysis (2 tasks)
+  - task_id: "blog_trends_001"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "The Rise of Autonomous Agents: Market Analysis and Emerging Opportunities"
+      target_audience: "Entrepreneurs and Product Managers"
+      required_sections:
+        - "Market Overview"
+        - "Current State of Technology"
+        - "Key Players and Startups"
+        - "Investment Opportunities"
+        - "Challenges and Barriers"
+      min_words: 900
+    expected:
+      required_keywords:
+        - "autonomous agents"
+        - "market"
+        - "opportunity"
+        - "technology"
+        - "startup"
+      min_sections: 5
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_market_insight"
+      - "llm_judge_strategic_vision"
+    difficulty: "high"
+    tags:
+      - "trends"
+      - "market"
+      - "ai"
+
+  - task_id: "blog_trends_002"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Edge AI and On-Device ML: The Future of Distributed Machine Learning"
+      target_audience: "IoT Engineers and Edge Computing Specialists"
+      required_sections:
+        - "Edge AI Fundamentals"
+        - "Hardware and Platforms"
+        - "Model Optimization Techniques"
+        - "Real-World Applications"
+        - "Future Roadmap"
+      min_words: 850
+    expected:
+      required_keywords:
+        - "edge ai"
+        - "on-device"
+        - "optimization"
+        - "hardware"
+        - "iot"
+      min_sections: 5
+      must_have_citations: true
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_depth"
+      - "llm_judge_forward_thinking"
+    difficulty: "high"
+    tags:
+      - "trends"
+      - "edge"
+      - "iot"
+
+grading_strategies:
+  deterministic_keyword_match:
+    description: "Verify all required keywords appear in the generated blog"
+    weight: 0.3
+  llm_judge_technical_accuracy:
+    description: "LLM evaluates technical correctness and depth"
+    weight: 0.25
+  llm_judge_structure_flow:
+    description: "LLM evaluates content organization and logical flow"
+    weight: 0.15
+  llm_judge_unbiased_perspective:
+    description: "LLM checks for balanced, unbiased comparison"
+    weight: 0.15
+  llm_judge_financial_relevance:
+    description: "LLM evaluates financial accuracy and relevance"
+    weight: 0.2
+  llm_judge_market_insight:
+    description: "LLM assesses market understanding and foresight"
+    weight: 0.2
+  llm_judge_practical_value:
+    description: "LLM judges actionable insights and practical utility"
+    weight: 0.15
+  llm_judge_clarity:
+    description: "LLM evaluates writing clarity and accessibility"
+    weight: 0.2
+  llm_judge_code_examples:
+    description: "LLM validates quality and relevance of code snippets"
+    weight: 0.15
+  llm_judge_practical_steps:
+    description: "LLM checks for clear, actionable implementation steps"
+    weight: 0.2
+  llm_judge_completeness:
+    description: "LLM assesses coverage of topic"
+    weight: 0.1
+  llm_judge_code_quality:
+    description: "LLM validates code quality and best practices"
+    weight: 0.15
+  llm_judge_strategic_vision:
+    description: "LLM evaluates strategic insights and future outlook"
+    weight: 0.15
+  llm_judge_forward_thinking:
+    description: "LLM assesses futuristic thinking and innovation discussion"
+    weight: 0.15
+  llm_judge_unbiased_analysis:
+    description: "LLM checks for balanced, objective comparison"
+    weight: 0.2
+  llm_judge_analytical_depth:
+    description: "LLM evaluates depth of analysis and insights"
+    weight: 0.2
+  llm_judge_educational_value:
+    description: "LLM judges educational content quality"
+    weight: 0.15
+  llm_judge_economic_understanding:
+    description: "LLM evaluates economic principle comprehension"
+    weight: 0.2
+  llm_judge_practical_strategies:
+    description: "LLM assesses practical applicability of strategies"
+    weight: 0.15
+  llm_judge_business_relevance:
+    description: "LLM evaluates business application and relevance"
+    weight: 0.15
+  llm_judge_data_driven:
+    description: "LLM checks for data-backed claims and statistics"
+    weight: 0.15
+  llm_judge_enterprise_focus:
+    description: "LLM evaluates enterprise-level considerations"
+    weight: 0.1
+  llm_judge_neutrality:
+    description: "LLM checks for neutral, balanced perspective"
+    weight: 0.15
+  llm_judge_policy_understanding:
+    description: "LLM evaluates regulatory and policy knowledge"
+    weight: 0.2
+  llm_judge_impact_assessment:
+    description: "LLM assesses environmental and social impact analysis"
+    weight: 0.15
+  llm_judge_pragmatic_advice:
+    description: "LLM evaluates practical, actionable recommendations"
+    weight: 0.15
+  llm_judge_technical_rigor:
+    description: "LLM checks for scientific rigor and methodology"
+    weight: 0.2
+  llm_judge_practical_frameworks:
+    description: "LLM evaluates practical frameworks and tools"
+    weight: 0.15
+  llm_judge_comprehensive_analysis:
+    description: "LLM assesses depth and breadth of analysis"
+    weight: 0.2
+  llm_judge_architectural_thinking:
+    description: "LLM evaluates systems thinking and architecture"
+    weight: 0.15
+  llm_judge_security_relevance:
+    description: "LLM evaluates security best practices coverage"
+    weight: 0.15
+  llm_judge_practical_solutions:
+    description: "LLM checks for practical, implementable solutions"
+    weight: 0.15
+  llm_judge_data_accuracy:
+    description: "LLM verifies accuracy of statistics and data"
+    weight: 0.2
+  llm_judge_technical_depth:
+    description: "LLM evaluates depth of technical explanation"
+    weight: 0.2
+  llm_judge_comprehensiveness:
+    description: "LLM assesses overall topic coverage"
+    weight: 0.1
+
+difficulty_weights:
+  easy: 1.0
+  medium: 1.5
+  hard: 2.5
+  high: 2.0
+
+metadata:
+  version: "1.0"
+  repository: "saket0x07/Agentic-blog-researcher-and-writter"
+  description: "Comprehensive blog generation test suite for agentic research and writing"
+  agent_type: "blog_researcher_writer_agent"
+  categories:
+    - "technology"
+    - "finance"
+    - "reviews"
+    - "tutorials"
+    - "trends"
+  tags:
+    - "python"
+    - "ai"
+    - "blog"
+    - "research"
+    - "writing"
+    - "langgraph"
+    - "research-backed"
+  created_at: "2026-07-14"
+  total_tasks: 30
+  task_distribution:
+    technology: 10
+    finance: 8
+    reviews: 8
+    tutorials: 4
+  grading_focus:
+    - "keyword_verification"
+    - "technical_accuracy"
+    - "writing_quality"
+    - "structure_and_flow"
+    - "citations_and_sources"
+    - "bias_and_balance"
+    - "practical_value"

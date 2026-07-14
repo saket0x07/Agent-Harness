@@ -1,0 +1,24 @@
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Databases
+data/*.db
+data/*.db-journal
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local IDE/Environment settings
+.vscode/
+.idea/
+.env
+.env.local
