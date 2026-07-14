@@ -139,8 +139,15 @@ Provides persistence using Python's built-in `sqlite3` engine:
   - Built trajectory auditing identifying repeating tool invocation loops (consecutive tool+args >= 3) and premature shutdowns.
   - Integrated `GraderEngine` into `src/runner.py` task execution loops.
 - **LLM Judge**:
-  - Built `llm_judge.py` using `google.genai` SDK and Pydantic schemas for structured grading inputs via Gemini.
-  - Added offline mock fallback when `GEMINI_API_KEY` is not present in the shell.
+  - Built `llm_judge.py` using a multi-provider fallback architecture:
+    1. **OpenRouter API** (Primary): Calls Claude 3.5 Sonnet (`anthropic/claude-3.5-sonnet`) with structured JSON response formats via standard `requests` HTTP calls.
+    2. **Gemini API** (Secondary Fallback): Calls `gemini-2.5-flash` natively using the `google.genai` SDK and Pydantic validation schemas.
+    3. **Offline Mock** (Tertiary Fallback): Automatically resolves dummy/missing keys to return safe offline placeholder results.
+  - Automatically loads variables at startup using `python-dotenv`.
+- **Environment Configuration**:
+  - Created `.env` file containing placeholders for `OPENROUTER_API_KEY` and `GEMINI_API_KEY`.
+  - Added `.env` directly in `.gitignore` to prevent secret leakages.
+  - Added `python-dotenv` and `requests` to `requirements.txt`.
 - **Calibration**:
   - Created `scripts/calibrate_judge.py` comparing LLM judge metrics against manual annotations and compiling MAE delta reports.
 - **Testing**:
