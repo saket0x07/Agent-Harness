@@ -77,7 +77,7 @@ You MUST output raw JSON matching this schema:
                     "HTTP-Referer": "https://github.com/saket0x07/Agent-Harness",
                 },
                 json={
-                    "model": "anthropic/claude-3.5-sonnet",
+                    "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
                     "messages": [
                         {"role": "user", "content": prompt}
                     ],
@@ -107,7 +107,7 @@ You MUST output raw JSON matching this schema:
             client = genai.Client(api_key=gemini_key)
             
             response = client.models.generate_content(
-                model='gemini-2.5-flash',
+                model='gemini-1.5-flash',
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",

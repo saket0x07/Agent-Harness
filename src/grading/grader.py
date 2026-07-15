@@ -86,7 +86,8 @@ class GraderEngine:
                 trajectory_checks["failure_mode"] = "premature_termination"
                 
         # 3. subjective LLM-as-a-Judge grading
-        llm_judge_score = evaluate_subjective_quality(self.task, result)
+        has_llm_judge = any(s.startswith("llm_judge") for s in self.task.grading_strategy)
+        llm_judge_score = evaluate_subjective_quality(self.task, result) if has_llm_judge else None
         
         # 4. Compute overall Pass status
         # Must pass all deterministic checks and have no detected trajectory loop/termination failures

@@ -181,8 +181,11 @@ def test_trajectory_premature_termination():
     assert grading_res.trajectory["failure_mode"] == "premature_termination"
     assert grading_res.is_pass is False
 
-def test_llm_judge_offline_fallback():
+def test_llm_judge_offline_fallback(monkeypatch):
     """Verify that evaluate_subjective_quality returns placeholder values when API key is missing."""
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    
     task = TaskSpec(
         task_id="t_fallback",
         agent_target="mock",

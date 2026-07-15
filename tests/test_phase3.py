@@ -61,8 +61,12 @@ def temp_db_path():
     if db_path.exists():
         db_path.unlink()
 
-def test_cli_run_command(temp_suite, temp_db_path):
+def test_cli_run_command(temp_suite, temp_db_path, monkeypatch):
     """Verify that running the main.py CLI run command executes tasks, grades them, and saves output to SQLite."""
+    from src.runner import ADAPTER_REGISTRY
+    from src.adapters.mock_agent import MockAgentAdapter
+    monkeypatch.setitem(ADAPTER_REGISTRY, "blog_researcher_writer_agent", MockAgentAdapter)
+
     runner = CliRunner()
     
     # Run command

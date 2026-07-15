@@ -7,11 +7,14 @@ from typing import Optional, List, Dict, Any
 from src.core.schemas import TaskSpec, AgentResult, GradingResult, MetricsReport
 from src.loader.suite_loader import load_task_suite
 from src.adapters.mock_agent import MockAgentAdapter
+from src.adapters.blog_writer import BlogWriterAdapter
+from src.adapters.blog_writer_api import BlogWriterAPIAdapter
 from src.storage.db import init_db, save_run, save_trace_events, save_grading_result
 
 # Registry of available agent adapters
 ADAPTER_REGISTRY = {
-    "blog_researcher_writer_agent": MockAgentAdapter,
+    "blog_researcher_writer_agent": BlogWriterAPIAdapter,
+    "blog_researcher_writer_agent_local": BlogWriterAdapter,
     "mock": MockAgentAdapter
 }
 
@@ -19,7 +22,8 @@ def execute_suite(
     suite_path: str,
     agent_name: str,
     agent_version: str,
-    db_path: Optional[Path] = None
+    db_path: Optional[Path] = None,
+    limit: Optional[int] = None
 ) -> MetricsReport:
     """Executes a benchmark task suite for a target agent, traces runs, and persists results.
     
@@ -28,6 +32,7 @@ def execute_suite(
         agent_name: Target agent identifier.
         agent_version: Version identifier of the agent under evaluation.
         db_path: SQLite DB destination path.
+        limit: Optional limit on the number of tasks to execute.
         
     Returns:
         MetricsReport: Aggregated report detailing the outcomes of the run.
@@ -42,6 +47,10 @@ def execute_suite(
     agent_tasks = [t for t in tasks if t.agent_target == agent_name]
     if not agent_tasks:
         raise ValueError(f"No tasks in suite '{suite_path}' target agent '{agent_name}'.")
+
+    # Apply limit if specified
+    if limit is not None and limit > 0:
+        agent_tasks = agent_tasks[:limit]
 
     # 4. Resolve the correct adapter class
     adapter_class = ADAPTER_REGISTRY.get(agent_name)
@@ -93,6 +102,8 @@ def execute_suite(
         total_latency += result.total_latency_ms
         
         # Save traces to SQLite
+        for event in result.trace:
+            event.trace_id = trace_id
         trace_dicts = [event.model_dump() for event in result.trace]
         save_trace_events(trace_dicts, db_path=db_path)
         

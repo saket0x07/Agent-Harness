@@ -9,7 +9,7 @@ DEFAULT_DB_PATH = Path("data/harness.db")
 def get_connection(db_path: Path = DEFAULT_DB_PATH) -> sqlite3.Connection:
     """Returns a connection to the SQLite database, creating parent directories if needed."""
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(db_path))
+    conn = sqlite3.connect(str(db_path), timeout=30.0)
     conn.row_factory = sqlite3.Row
     return conn
 
