@@ -2,11 +2,11 @@
 
 > **Evaluate, trace, and regression-test AI agents with deterministic and LLM-judge grading at scale.**
 
-An evaluation platform that runs AI agents against benchmark task suites, captures their complete execution trace (not just the final answer), and scores them on task success, cost, latency, and failure modes. Built to detect silent regressions before they hit production.
+An evaluation platform that runs AI agents against benchmark task suites, captures their complete execution trace (not just the final answer), and scores them on task success, cost, latency, and failure modes.
 
 ## 📋 Overview
 
-Evaluating a model is straightforward: one input, one output, compare against a label or a human judge. Evaluating an **agent** is fundamentally different—agents don't produce answers, they produce **trajectories**: sequences of decisions, tool calls, reflections, and pivots.
+Evaluating a model is straightforward: one input, one output, compare against a label or a human judge. Evaluating an **agent** is fundamentally different—agents don't produce answers, they produce trajectories. You need to see every step: what tools they called, what they said, where they went wrong.
 
 Agent-Harness solves the core problem: **How do you know if your agent is actually getting better, or just getting different?**
 
@@ -512,6 +512,66 @@ python scripts/view_traces.py --run-id run_2026_07_14_001 --format tree
 # └── [LLM] Claude Sonnet (200 tokens in, 45 out) [3.1ms] [$0.0018]
 ```
 
+#### Execution Trace Visualization
+
+Get detailed insights into every step of your agent's execution with rich, hierarchical trace visualization:
+
+![Execution Trace Viewer](https://via.placeholder.com/1000x600?text=Trace+Viewer+Screenshot)
+
+The trace viewer displays:
+- **Node Name & Type** — Which component executed (LLM call, tool call, state transition)
+- **Latency** — Time taken for each step (helps identify bottlenecks)
+- **Token Usage** — Input/output tokens for LLM calls (track cost per step)
+- **Cost (USD)** — Granular cost breakdown
+- **Summary/Arguments** — Full context of what happened at each step
+- **Errors** — Detailed error messages if a step failed
+
+**Example usage:**
+```bash
+python scripts/view_traces.py \
+  --run-id run_interactive_1784186575 \
+  --format tree \
+  --task-id interactive_6eb663
+```
+
+---
+
+### Interactive Evaluation with Judge Feedback
+
+Run agents interactively with real-time LLM-as-Judge scoring and trajectory analysis:
+
+![Interactive Evaluation](https://via.placeholder.com/1000x600?text=Interactive+Evaluation+Screenshot)
+
+The interactive mode provides:
+- **Real-time Configuration** — Select agent, version, and enable/disable judge
+- **Input Prompts** — Natural language task specification
+- **Execution Status** — Track API calls and wait for results
+- **Comprehensive Grading** — Deterministic checks + LLM judge scores
+- **Trajectory Auditing** — Failure mode detection (infinite loops, hallucinations, etc.)
+- **Judge Feedback** — Detailed critique of output quality, clarity, completeness
+
+**Example interactive session:**
+```bash
+python main.py interactive \
+  --agent blog_researcher_writer_agent \
+  --version v1.0-interactive \
+  --db data/harness.db
+
+# Prompts:
+# Enter the blog topic/title: "gen ai"
+# Enter target audience: "ai engineers"
+# Enter expected keywords: "evaluation,tracing,regression"
+
+# Output:
+# ✅ Execution Completed
+# Outcome: Passed
+# Latency: 295532ms | Cost: $0.00000
+# Trajectory Analysis: No failures detected
+# LLM Judge Score: Clarity: 5/5 | Accuracy: 5/5 | Completeness: 5/5
+```
+
+---
+
 ### Compare Two Agent Versions
 
 ```bash
@@ -606,7 +666,7 @@ pytest tests/ --cov=src --cov-report=html
 
 > **The core value isn't in the first score—it's in catching when things get worse.**
 
-Regressions are silent. A prompt change that seems like an improvement can quietly reduce success rate by 10% across a test suite, and you won't notice until a user complains. This harness makes that detection automatic.
+Regressions are silent. A prompt change that seems like an improvement can quietly reduce success rate by 10% across a test suite, and you won't notice until a user complains. This harness makes regressions visible and measurable.
 
 > **Judge the trajectory, not just the final output.**
 
@@ -651,5 +711,5 @@ For issues, questions, or feedback:
 
 ---
 
-**Last Updated:** July 15, 2026  
+**Last Updated:** July 16, 2026  
 **Status:** Active Development (MVP Phase)
