@@ -37,24 +37,33 @@ def evaluate_subjective_quality(task: TaskSpec, result: AgentResult) -> Optional
     openrouter_key = os.environ.get("OPENROUTER_API_KEY")
     gemini_key = os.environ.get("GEMINI_API_KEY")
     
+    topic = task.input.get("topic") or task.input.get("question") or task.input.get("query") or "Default Topic/Question"
+    audience = task.input.get("target_audience") or "General Q&A / Information Retrieval"
+    required_sections = task.input.get("required_sections") or []
+
     prompt = f"""
-You are an expert technical editor and content reviewer. Your job is to grade the output of a content writer agent.
+You are an expert content reviewer and quality evaluator. Your job is to grade the output of an AI agent.
 
-### Task Topic:
-{task.input.get("topic", "Default Topic")}
+### Task / Question / Topic:
+{topic}
 
-### Target Audience:
-{task.input.get("target_audience", "General Public")}
+### Target Context / Audience:
+{audience}
+"""
+    if required_sections:
+        prompt += f"\n### Expected Sections:\n{', '.join(required_sections)}\n"
 
-### Expected Sections:
-{', '.join(task.input.get("required_sections", []))}
-
+    prompt += f"""
 ### Agent Output Content:
 ---
 {result.final_output}
 ---
 
-Please evaluate the content quality strictly against these rubrics and score clarity, accuracy, and completeness on a scale of 0 to 5.
+Please evaluate the content quality strictly against these rubrics and score clarity, accuracy, and completeness on a scale of 0 to 5:
+- Clarity: Is the response easy to read, coherent, and well-structured?
+- Accuracy: Is the content factually correct and aligned with the provided topic/question?
+- Completeness: Does the response fully address the prompt's focus and guidelines?
+
 Provide a clear critique explaining your scoring.
 You MUST output raw JSON matching this schema:
 {{

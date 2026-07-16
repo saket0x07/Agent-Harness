@@ -9,6 +9,7 @@ This file details all implementations and holds a history of changes for the **A
 Agent-Harness/
 ├── data/
 │   └── suites/
+│       ├── drs_suite.yaml     # Evaluation tasks for the DRS agent
 │       └── sample_suite.yaml  # Sample task specs YAML (31 tasks)
 ├── scripts/
 │   └── calibrate_judge.py     # Script to calibrate LLM judge MAE error delta
@@ -17,6 +18,7 @@ Agent-Harness/
 │   ├── adapters/
 │   │   ├── __init__.py
 │   │   ├── base.py            # AgentAdapter Protocol interface
+│   │   ├── drs_adapter.py     # Document Retrieval System API adapter
 │   │   └── mock_agent.py      # MockAgent simulated adapter paths
 │   ├── core/
 │   │   ├── __init__.py
@@ -36,6 +38,7 @@ Agent-Harness/
 │   │   └── llm_judge.py       # Subjective rubric rating via google.genai
 │   └── runner.py              # Execution runner loop & database integration
 ├── tests/
+│   ├── test_drs_adapter.py    # Unit tests for the DRS adapter
 │   ├── test_phase1.py         # Automated pytest suite for Phase 1
 │   ├── test_phase2.py         # Automated pytest suite for Phase 2
 │   ├── test_phase3.py         # Automated pytest suite for Phase 3
@@ -72,6 +75,7 @@ Provides persistence using Python's built-in `sqlite3` engine:
 
 ### 4. Agent Adapter Interface & Mock Implementation (`src/adapters/`)
 - **`AgentAdapter` (`base.py`)**: A runtime-checkable Protocol defining the single entry-point execution contract `run(task) -> AgentResult`. Ensures framework-agnostic testing of any agent pipeline.
+- **`DRSAdapter` (`drs_adapter.py`)**: Adapter to execute evaluation tasks against the Document Retrieval System (DRS) FastAPI server running on port 8000 via HTTP, with structured sub-span trace generation.
 - **`MockAgentAdapter` (`mock_agent.py`)**: Conforming to the protocol, this adapter simulates various agent execution paths (`success`, `infinite_loop`, `fail_tool`, `premature_termination`), enabling testing of loop detection, trace logging, and traceback capturing.
 
 ### 5. Thread-Safe Instrumentation (`src/tracing/tracer.py`)
@@ -151,8 +155,17 @@ Provides persistence using Python's built-in `sqlite3` engine:
 - **Calibration**:
   - Created `scripts/calibrate_judge.py` comparing LLM judge metrics against manual annotations and compiling MAE delta reports.
 - **Testing**:
-  - Created `tests/test_phase4.py` verifying keyword triggers, citation searches, loop traces, premature timeouts, and offline score responses.
+  - Created tests/test_phase4.py verifying keyword triggers, citation searches, loop traces, premature timeouts, and offline score responses.
 - **Result**: All 15 unit tests pass successfully, and calibration metrics execute with zero warning flags.
 
-
-
+### **2026-07-16 (DRS Adapter & Q&A Generalization)**
+- **Adapter**:
+  - Implemented `DRSAdapter` in `src/adapters/drs_adapter.py` querying the Document Retrieval System (DRS) FastAPI server running on port 8000 at endpoint `/ask`.
+  - Configured detailed trace event generation capturing HTTP API requests (`drs_api_request`), retrieval queries (`retriever`), and LLM generation metadata (`llm_generation`) with token/cost estimation.
+  - Registered `drs` and `drs_agent` in `runner.py` registry.
+- **Generalization**:
+  - Generalized subjective LLM judge prompt in `src/grading/llm_judge.py` to evaluate Q&A tasks instead of assuming blog post structures.
+  - Custom-tailored CLI `interactive` command in `main.py` to prompt specifically for questions/keywords when evaluating the DRS agent.
+- **Suites & Testing**:
+  - Added new 4-task evaluation suite `data/suites/drs_suite.yaml` targeting real resumes in the DRS backend.
+  - Added unit test file `tests/test_drs_adapter.py` mocking API endpoints, and confirmed all 19 pytest test cases pass successfully.

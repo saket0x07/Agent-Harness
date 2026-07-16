@@ -1,0 +1,69 @@
+tasks:
+  - task_id: "drs_task_001"
+    agent_target: "drs"
+    input:
+      question: "What are the core technical skills of Lakshmi Venkataraman?"
+    expected:
+      required_keywords:
+        - "Lakshmi"
+        - "Venkataraman"
+        - "Python"
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+    difficulty: "easy"
+    tags:
+      - "drs"
+      - "skills"
+
+  - task_id: "drs_task_002"
+    agent_target: "drs"
+    input:
+      question: "Summarize the work history and projects of Rohan Kapoor."
+    expected:
+      required_keywords:
+        - "Rohan"
+        - "Kapoor"
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+    difficulty: "medium"
+    tags:
+      - "drs"
+      - "history"
+
+  - task_id: "drs_task_003"
+    agent_target: "drs"
+    input:
+      question: "What is John Huber's professional background and experience?"
+    expected:
+      required_keywords:
+        - "John"
+        - "Huber"
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+    difficulty: "medium"
+    tags:
+      - "drs"
+      - "experience"
+
+  - task_id: "drs_task_004"
+    agent_target: "drs"
+    input:
+      question: "What are some of the main topics or guidelines mentioned in the LLM Interview Questions document?"
+    expected:
+      required_keywords:
+        - "LLM"
+        - "Interview"
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+    difficulty: "hard"
+    tags:
+      - "drs"
+      - "interview"

@@ -9,13 +9,16 @@ from src.loader.suite_loader import load_task_suite
 from src.adapters.mock_agent import MockAgentAdapter
 from src.adapters.blog_writer import BlogWriterAdapter
 from src.adapters.blog_writer_api import BlogWriterAPIAdapter
+from src.adapters.drs_adapter import DRSAdapter
 from src.storage.db import init_db, save_run, save_trace_events, save_grading_result
 
 # Registry of available agent adapters
 ADAPTER_REGISTRY = {
     "blog_researcher_writer_agent": BlogWriterAPIAdapter,
     "blog_researcher_writer_agent_local": BlogWriterAdapter,
-    "mock": MockAgentAdapter
+    "mock": MockAgentAdapter,
+    "drs": DRSAdapter,
+    "drs_agent": DRSAdapter
 }
 
 def execute_suite(

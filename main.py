@@ -125,35 +125,62 @@ def interactive(agent, version, db, no_judge):
     ))
     
     # Prompt the user for custom task inputs
-    topic = click.prompt("\n[bold yellow]✍️ Enter the blog topic/title[/bold yellow]", type=str)
-    audience = click.prompt("[bold yellow]👥 Enter target audience[/bold yellow]", default="Software Developers", type=str)
-    keywords_raw = click.prompt("[bold yellow]🔑 Enter expected keywords (comma-separated, optional)[/bold yellow]", default="", show_default=False, type=str)
-    
-    # Process keywords
-    keywords = [kw.strip() for kw in keywords_raw.split(",") if kw.strip()]
-    
-    # Construct a TaskSpec dynamically
-    import uuid
-    task_id = f"interactive_{uuid.uuid4().hex[:6]}"
-    
-    from src.core.schemas import TaskSpec
-    task = TaskSpec(
-        task_id=task_id,
-        agent_target=agent,
-        input={
-            "topic": topic,
-            "target_audience": audience,
-            "required_sections": [] # Determined dynamically on the backend
-        },
-        expected={
-            "required_keywords": keywords,
-            "min_sections": 1,
-            "must_have_citations": False
-        },
-        grading_strategy=["deterministic_keyword_match"] + ([] if no_judge else ["llm_judge_technical_accuracy"]),
-        difficulty="medium",
-        tags=["interactive"]
-    )
+    if agent in ["drs", "drs_agent"]:
+        question = click.prompt("\n[bold yellow]❓ Enter your question for the Document Retrieval System[/bold yellow]", type=str)
+        keywords_raw = click.prompt("[bold yellow]🔑 Enter expected keywords (comma-separated, optional)[/bold yellow]", default="", show_default=False, type=str)
+        
+        # Process keywords
+        keywords = [kw.strip() for kw in keywords_raw.split(",") if kw.strip()]
+        
+        # Construct a TaskSpec dynamically
+        import uuid
+        task_id = f"interactive_{uuid.uuid4().hex[:6]}"
+        
+        from src.core.schemas import TaskSpec
+        task = TaskSpec(
+            task_id=task_id,
+            agent_target=agent,
+            input={
+                "question": question
+            },
+            expected={
+                "required_keywords": keywords,
+                "must_have_citations": False
+            },
+            grading_strategy=["deterministic_keyword_match"] + ([] if no_judge else ["llm_judge_technical_accuracy"]),
+            difficulty="medium",
+            tags=["interactive"]
+        )
+    else:
+        topic = click.prompt("\n[bold yellow]✍️ Enter the blog topic/title[/bold yellow]", type=str)
+        audience = click.prompt("[bold yellow]👥 Enter target audience[/bold yellow]", default="Software Developers", type=str)
+        keywords_raw = click.prompt("[bold yellow]🔑 Enter expected keywords (comma-separated, optional)[/bold yellow]", default="", show_default=False, type=str)
+        
+        # Process keywords
+        keywords = [kw.strip() for kw in keywords_raw.split(",") if kw.strip()]
+        
+        # Construct a TaskSpec dynamically
+        import uuid
+        task_id = f"interactive_{uuid.uuid4().hex[:6]}"
+        
+        from src.core.schemas import TaskSpec
+        task = TaskSpec(
+            task_id=task_id,
+            agent_target=agent,
+            input={
+                "topic": topic,
+                "target_audience": audience,
+                "required_sections": [] # Determined dynamically on the backend
+            },
+            expected={
+                "required_keywords": keywords,
+                "min_sections": 1,
+                "must_have_citations": False
+            },
+            grading_strategy=["deterministic_keyword_match"] + ([] if no_judge else ["llm_judge_technical_accuracy"]),
+            difficulty="medium",
+            tags=["interactive"]
+        )
     
     # Run suite logic manually for this single task
     from src.storage.db import init_db, save_task, save_run, save_trace_events, save_grading_result
