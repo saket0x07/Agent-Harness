@@ -110,6 +110,7 @@ navigation = st.sidebar.radio(
     [
         "📊 Dashboard & Trend Analysis",
         "📋 Runs & Detailed Reports",
+        "🏃 Suite Runner & Comparison",
         "🔍 Trace & Token Visualizer",
         "🤖 Interactive Adapter Testing",
         "⚠️ Failure Mode Analysis",
@@ -591,6 +592,250 @@ elif navigation == "🤖 Interactive Adapter Testing":
                 render_node(r)
 
 # ----------------------------------------------------
+# View Suite Runner & Comparison
+# ----------------------------------------------------
+elif navigation == "🏃 Suite Runner & Comparison":
+    st.title("🏃 Suite Runner & Comparison")
+    st.write("Execute benchmark task suites and perform side-by-side comparative analysis of different runs.")
+
+    tab_run, tab_compare = st.tabs(["🚀 Execute Task Suite", "🔄 Compare Evaluation Runs"])
+
+    with tab_run:
+        st.subheader("Configure and Run Task Suite")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            selected_agent = st.selectbox("Select Target Agent Adapter", list(ADAPTER_REGISTRY.keys()), key="suite_run_agent")
+            
+            # Auto-detect suites in data/suites
+            suite_dir = Path("data/suites")
+            suite_files = []
+            if suite_dir.exists() and suite_dir.is_dir():
+                suite_files = sorted(list(suite_dir.glob("*.yaml")) + list(suite_dir.glob("*.yml")) + list(suite_dir.glob("*.json")))
+            suite_options = [str(f.relative_to(Path(".").absolute())) if f.is_relative_to(Path(".").absolute()) else str(f) for f in suite_files]
+            suite_options.append("Enter custom path...")
+            
+            selected_suite_opt = st.selectbox("Select Task Suite File", suite_options, key="suite_run_file")
+            if selected_suite_opt == "Enter custom path...":
+                selected_suite = st.text_input("Enter custom suite file/dir path", "data/suites/drs_suite.yaml", key="suite_run_custom_file")
+            else:
+                selected_suite = selected_suite_opt
+                
+        with col2:
+            agent_version = st.text_input("Agent Version Tag", "v1.0", key="suite_run_version")
+            limit_checkbox = st.checkbox("Limit number of tasks to execute?", value=False, key="suite_run_limit_check")
+            if limit_checkbox:
+                task_limit = st.number_input("Task Limit", min_value=1, value=5, step=1, key="suite_run_limit_val")
+            else:
+                task_limit = None
+
+        st.markdown("---")
+        if st.button("🚀 Execute Suite Run", use_container_width=True, key="btn_run_suite"):
+            if not selected_suite:
+                st.error("Please specify a valid suite path.")
+            elif not Path(selected_suite).exists():
+                st.error(f"Suite path does not exist: {selected_suite}")
+            else:
+                with st.spinner(f"Running suite '{selected_suite}' against agent '{selected_agent}'... This performs execution and grading."):
+                    from src.runner import execute_suite
+                    try:
+                        report = execute_suite(
+                            suite_path=selected_suite,
+                            agent_name=selected_agent,
+                            agent_version=agent_version,
+                            db_path=DEFAULT_DB_PATH,
+                            limit=task_limit
+                        )
+                        st.success(f"Suite Run Completed successfully! Run ID: {report.run_id}")
+                        
+                        # Summary statistics
+                        st.markdown("### Run Metrics Summary")
+                        sum_col1, sum_col2, sum_col3, sum_col4 = st.columns(4)
+                        sum_col1.metric("Total Tasks", report.total_tasks)
+                        sum_col2.metric("Success Rate", f"{report.success_rate * 100:.1f}%")
+                        sum_col3.metric("Avg Latency", f"{report.average_latency_ms:.0f} ms")
+                        sum_col4.metric("Avg Cost (USD)", f"${report.average_cost_usd:.5f}")
+                        
+                        # Detailed results table
+                        st.markdown("### Detailed Task Results")
+                        task_res_data = []
+                        for res in report.detailed_results:
+                            task_res_data.append({
+                                "Task ID": res.task_id,
+                                "Trace ID": res.trace_id,
+                                "Passed": "✅ Yes" if res.is_pass else "❌ No",
+                                "Failure Mode": res.trajectory.get("failure_mode") or "None"
+                            })
+                        st.dataframe(pd.DataFrame(task_res_data), use_container_width=True)
+                    except Exception as e:
+                        st.error(f"Suite execution error: {str(e)}")
+
+    with tab_compare:
+        st.subheader("Side-by-Side Comparison of Runs")
+        runs = get_all_runs(DEFAULT_DB_PATH)
+        if len(runs) < 2:
+            st.warning("Please execute at least two runs to perform a comparison. You currently have fewer than two runs recorded.")
+        else:
+            # Format run options
+            run_options = {
+                f"{r['run_id']} - Agent: {r['agent_name']} ({r['agent_version']}) - {r['timestamp'][:16].replace('T', ' ')}": r
+                for r in runs
+            }
+            run_keys = list(run_options.keys())
+            
+            c_col1, c_col2 = st.columns(2)
+            with c_col1:
+                run_a_label = st.selectbox("Base Run (A)", run_keys, index=min(1, len(run_keys) - 1), key="compare_run_a")
+                run_a = run_options[run_a_label]
+            with c_col2:
+                run_b_label = st.selectbox("Target Run (B)", run_keys, index=0, key="compare_run_b")
+                run_b = run_options[run_b_label]
+                
+            if run_a["run_id"] == run_b["run_id"]:
+                st.warning("You have selected the same run for both Base and Target. Select different runs for comparison.")
+            
+            # High-level metrics comparison
+            metrics_a = run_a["metrics"]
+            metrics_b = run_b["metrics"]
+            
+            st.markdown("---")
+            st.subheader("📊 Comparison Summary")
+            
+            sr_a = metrics_a.get("success_rate", 0.0)
+            sr_b = metrics_b.get("success_rate", 0.0)
+            delta_sr = (sr_b - sr_a) * 100
+            
+            lat_a = metrics_a.get("average_latency_ms", 0.0)
+            lat_b = metrics_b.get("average_latency_ms", 0.0)
+            delta_lat = lat_b - lat_a
+            
+            cost_a = metrics_a.get("average_cost_usd", 0.0)
+            cost_b = metrics_b.get("average_cost_usd", 0.0)
+            delta_cost = cost_b - cost_a
+            
+            tasks_a = metrics_a.get("total_tasks", 0)
+            tasks_b = metrics_b.get("total_tasks", 0)
+            delta_tasks = tasks_b - tasks_a
+            
+            m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+            m_col1.metric(
+                label="Success Rate",
+                value=f"{sr_b * 100:.1f}%",
+                delta=f"{delta_sr:+.1f}%",
+                delta_color="normal"
+            )
+            m_col2.metric(
+                label="Avg Latency",
+                value=f"{lat_b:.0f} ms",
+                delta=f"{delta_lat:+.0f} ms",
+                delta_color="inverse"
+            )
+            m_col3.metric(
+                label="Avg Cost",
+                value=f"${cost_b:.5f}",
+                delta=f"${delta_cost:+.5f}",
+                delta_color="inverse"
+            )
+            m_col4.metric(
+                label="Total Tasks",
+                value=tasks_b,
+                delta=delta_tasks
+            )
+            
+            # Task-by-task matrix comparison
+            results_a = {res["task_id"]: res for res in metrics_a.get("detailed_results", [])}
+            results_b = {res["task_id"]: res for res in metrics_b.get("detailed_results", [])}
+            
+            all_task_ids = sorted(list(set(results_a.keys()) | set(results_b.keys())))
+            
+            matrix_data = []
+            for t_id in all_task_ids:
+                res_a = results_a.get(t_id)
+                res_b = results_b.get(t_id)
+                
+                status_a = "N/A" if res_a is None else ("✅ Pass" if res_a["is_pass"] else "❌ Fail")
+                status_b = "N/A" if res_b is None else ("✅ Pass" if res_b["is_pass"] else "❌ Fail")
+                
+                if res_a is None:
+                    comparison = "🆕 New in Target"
+                elif res_b is None:
+                    comparison = "🗑️ Removed in Target"
+                elif res_a["is_pass"] and res_b["is_pass"]:
+                    comparison = "✅ Passed (Both)"
+                elif not res_a["is_pass"] and not res_b["is_pass"]:
+                    comparison = "❌ Failed (Both)"
+                elif not res_a["is_pass"] and res_b["is_pass"]:
+                    comparison = "📈 Improved (Fail -> Pass)"
+                else:
+                    comparison = "📉 Regressed (Pass -> Fail)"
+                    
+                matrix_data.append({
+                    "Task ID": t_id,
+                    "Base Run A": status_a,
+                    "Target Run B": status_b,
+                    "Comparison State": comparison
+                })
+                
+            st.markdown("### 📋 Task Comparison Matrix")
+            st.dataframe(pd.DataFrame(matrix_data), use_container_width=True)
+            
+            st.markdown("---")
+            st.subheader("🔍 Inspect Single Task Side-by-Side")
+            selected_t_id = st.selectbox("Select Task to Inspect", all_task_ids, key="compare_task_select")
+            
+            if selected_t_id:
+                res_a = results_a.get(selected_t_id)
+                res_b = results_b.get(selected_t_id)
+                
+                det_col1, det_col2 = st.columns(2)
+                
+                with det_col1:
+                    st.markdown("#### 🅰️ Base Run A")
+                    if res_a is None:
+                        st.info("This task was not executed in Base Run A.")
+                    else:
+                        is_pass_html_a = '<span class="pass-badge">PASSED</span>' if res_a["is_pass"] else '<span class="fail-badge">FAILED</span>'
+                        st.markdown(f"**Outcome:** {is_pass_html_a}", unsafe_allow_html=True)
+                        st.markdown(f"**Failure Mode:** {res_a['trajectory'].get('failure_mode') or 'None'}")
+                        
+                        spans_a = get_traces_for_run(res_a["trace_id"], DEFAULT_DB_PATH)
+                        final_span_a = spans_a[-1] if spans_a else None
+                        final_output_a = final_span_a["output_summary"] if final_span_a else "N/A"
+                        
+                        st.markdown("**Final Agent Output:**")
+                        st.text_area("Output A", final_output_a, height=250, key="out_a", disabled=True)
+                        
+                        st.markdown("**Deterministic Validations:**")
+                        st.json(res_a["deterministic"])
+                        
+                        if res_a["llm_judge"]:
+                            st.markdown("**LLM Judge Feedback:**")
+                            st.json(res_a["llm_judge"])
+                            
+                with det_col2:
+                    st.markdown("#### 🅱️ Target Run B")
+                    if res_b is None:
+                        st.info("This task was not executed in Target Run B.")
+                    else:
+                        is_pass_html_b = '<span class="pass-badge">PASSED</span>' if res_b["is_pass"] else '<span class="fail-badge">FAILED</span>'
+                        st.markdown(f"**Outcome:** {is_pass_html_b}", unsafe_allow_html=True)
+                        st.markdown(f"**Failure Mode:** {res_b['trajectory'].get('failure_mode') or 'None'}")
+                        
+                        spans_b = get_traces_for_run(res_b["trace_id"], DEFAULT_DB_PATH)
+                        final_span_b = spans_b[-1] if spans_b else None
+                        final_output_b = final_span_b["output_summary"] if final_span_b else "N/A"
+                        
+                        st.markdown("**Final Agent Output:**")
+                        st.text_area("Output B", final_output_b, height=250, key="out_b", disabled=True)
+                        
+                        st.markdown("**Deterministic Validations:**")
+                        st.json(res_b["deterministic"])
+                        
+                        if res_b["llm_judge"]:
+                            st.markdown("**LLM Judge Feedback:**")
+                            st.json(res_b["llm_judge"])
+
+# ----------------------------------------------------
 # View 5: Failure Mode Analysis
 # ----------------------------------------------------
 elif navigation == "⚠️ Failure Mode Analysis":
@@ -722,14 +967,14 @@ elif navigation == "🎯 Judge Calibration":
     with st.spinner("Executing LLM-as-a-Judge grading to match annotations..."):
         for item in datasets:
             task_id = item.get("task_id")
-            topic = item.get("topic")
+            topic = item.get("topic") or item.get("question")
             output_text = item.get("agent_output")
             human = item.get("human_scores", {})
             
             task = TaskSpec(
                 task_id=task_id,
                 agent_target="mock",
-                input={"topic": topic},
+                input={"question": topic},
                 expected={},
                 grading_strategy=[]
             )

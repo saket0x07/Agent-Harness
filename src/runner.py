@@ -1,5 +1,28 @@
 import time
 import uuid
+import sys
+import builtins
+
+# Local safe print definition to avoid UnicodeEncodeError in non-UTF-8 console environments
+def safe_print(*args, **kwargs):
+    try:
+        builtins.print(*args, **kwargs)
+    except UnicodeEncodeError:
+        encoding = sys.stdout.encoding or 'utf-8'
+        new_args = [
+            str(arg).encode(encoding, errors='replace').decode(encoding)
+            for arg in args
+        ]
+        try:
+            builtins.print(*new_args, **kwargs)
+        except Exception:
+            ascii_args = [
+                str(arg).encode('ascii', errors='replace').decode('ascii')
+                for arg in args
+            ]
+            builtins.print(*ascii_args, **kwargs)
+
+print = safe_print
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, List, Dict, Any

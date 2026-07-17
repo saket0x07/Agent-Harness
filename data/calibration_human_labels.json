@@ -1,22 +1,42 @@
 [
   {
-    "task_id": "blog_tech_001",
-    "topic": "Model Context Protocol",
-    "agent_output": "# Draft: Model Context Protocol\n\nThis is an intro section to Model Context Protocol.\nHere we describe client and server communication.\nCitations: [1] MCP standard.",
+    "task_id": "drs_task_001",
+    "question": "What are the core technical skills of Lakshmi Venkataraman?",
+    "agent_output": "Lakshmi Venkataraman is a software engineer whose core technical skills include Python programming, machine learning engineering, data pipeline designs, and cloud infrastructure on AWS. She has built deep learning models and scalable microservices.",
     "human_scores": {
       "clarity": 4,
       "accuracy": 5,
+      "completeness": 4
+    }
+  },
+  {
+    "task_id": "drs_task_002",
+    "question": "Summarize the work history and projects of Rohan Kapoor.",
+    "agent_output": "Rohan Kapoor has worked as a Senior Data Scientist at TechCorp and Lead AI Engineer at Innovate Ltd. His projects include developing a natural language processing system for customer support, optimizing recommender algorithms, and building data lakes.",
+    "human_scores": {
+      "clarity": 5,
+      "accuracy": 4,
       "completeness": 3
     }
   },
   {
-    "task_id": "blog_tech_002",
-    "topic": "LangGraph vs LangChain",
-    "agent_output": "LangGraph uses graph state loops. LangChain is linear chains. It is simple but powerful.",
+    "task_id": "drs_task_003",
+    "question": "What is John Huber's professional background and experience?",
+    "agent_output": "John Huber has over 10 years of experience in product management and systems engineering. He formerly served as Product Director at Global Solutions, where he managed cross-functional teams to launch enterprise software products.",
     "human_scores": {
-      "clarity": 3,
+      "clarity": 4,
       "accuracy": 4,
-      "completeness": 2
+      "completeness": 4
+    }
+  },
+  {
+    "task_id": "drs_task_004",
+    "question": "What are some of the main topics or guidelines mentioned in the LLM Interview Questions document?",
+    "agent_output": "The LLM Interview Questions document covers transformer architecture details (self-attention mechanisms, positional encodings), fine-tuning approaches (LoRA, QLoRA), context window scaling, and reinforcement learning from human feedback (RLHF).",
+    "human_scores": {
+      "clarity": 5,
+      "accuracy": 5,
+      "completeness": 5
     }
   }
 ]
