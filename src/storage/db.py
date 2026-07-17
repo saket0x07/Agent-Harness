@@ -196,3 +196,110 @@ def set_baseline(agent_name: str, run_id: str, version_tag: str, db_path: Path =
     """, (agent_name, run_id, version_tag))
     conn.commit()
     conn.close()
+
+def get_all_runs(db_path: Path = DEFAULT_DB_PATH) -> List[Dict[str, Any]]:
+    """Retrieves all historical run metrics from the database."""
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM runs ORDER BY timestamp DESC")
+    rows = cursor.fetchall()
+    conn.close()
+    
+    runs = []
+    for row in rows:
+        runs.append({
+            "run_id": row["run_id"],
+            "agent_name": row["agent_name"],
+            "agent_version": row["agent_version"],
+            "timestamp": row["timestamp"],
+            "metrics": json.loads(row["metrics"]) if row["metrics"] else {}
+        })
+    return runs
+
+def get_run_by_id(run_id: str, db_path: Path = DEFAULT_DB_PATH) -> Optional[Dict[str, Any]]:
+    """Retrieves a single run by its ID."""
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM runs WHERE run_id = ?", (run_id,))
+    row = cursor.fetchone()
+    conn.close()
+    if row:
+        return {
+            "run_id": row["run_id"],
+            "agent_name": row["agent_name"],
+            "agent_version": row["agent_version"],
+            "timestamp": row["timestamp"],
+            "metrics": json.loads(row["metrics"]) if row["metrics"] else {}
+        }
+    return None
+
+def get_grading_results_for_run(run_id: str, db_path: Path = DEFAULT_DB_PATH) -> List[Dict[str, Any]]:
+    """Retrieves all task grading results associated with a run's trace IDs."""
+    run = get_run_by_id(run_id, db_path)
+    if not run or not run["metrics"]:
+        return []
+    
+    detailed_results = run["metrics"].get("detailed_results", [])
+    trace_ids = [res.get("trace_id") for res in detailed_results if res.get("trace_id")]
+    if not trace_ids:
+        return []
+        
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    
+    # SQLite parameter expansion
+    placeholders = ",".join("?" for _ in trace_ids)
+    cursor.execute(f"""
+        SELECT g.task_id, g.trace_id, g.deterministic, g.llm_judge, g.trajectory, g.is_pass, t.difficulty
+        FROM grading_results g
+        LEFT JOIN tasks t ON g.task_id = t.task_id
+        WHERE g.trace_id IN ({placeholders})
+    """, trace_ids)
+    rows = cursor.fetchall()
+    conn.close()
+    
+    results = []
+    for row in rows:
+        results.append({
+            "task_id": row["task_id"],
+            "trace_id": row["trace_id"],
+            "deterministic": json.loads(row["deterministic"]),
+            "llm_judge": json.loads(row["llm_judge"]) if row["llm_judge"] else None,
+            "trajectory": json.loads(row["trajectory"]),
+            "is_pass": bool(row["is_pass"]),
+            "difficulty": row["difficulty"] or "medium"
+        })
+    return results
+
+def get_traces_for_run(trace_id: str, db_path: Path = DEFAULT_DB_PATH) -> List[Dict[str, Any]]:
+    """Fetches and structures all execution spans/events for a given trace_id."""
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT * FROM traces 
+        WHERE trace_id = ? 
+        ORDER BY start_ts ASC
+    """, (trace_id,))
+    rows = cursor.fetchall()
+    conn.close()
+    
+    spans = []
+    for row in rows:
+        spans.append({
+            "span_id": row["span_id"],
+            "trace_id": row["trace_id"],
+            "parent_span_id": row["parent_span_id"],
+            "node": row["node"],
+            "type": row["type"],
+            "start_ts": row["start_ts"],
+            "end_ts": row["end_ts"],
+            "tokens_in": row["tokens_in"],
+            "tokens_out": row["tokens_out"],
+            "cost_usd": row["cost_usd"],
+            "tool_name": row["tool_name"],
+            "tool_args": json.loads(row["tool_args"]) if row["tool_args"] else None,
+            "output_summary": row["output_summary"],
+            "error": row["error"]
+        })
+    return spans
+
