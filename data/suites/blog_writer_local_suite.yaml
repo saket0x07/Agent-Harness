@@ -1,0 +1,53 @@
+tasks:
+  - task_id: "blog_local_task_001"
+    agent_target: "blog_researcher_writer_agent_local"
+    input:
+      topic: "Python Multiprocessing vs Threading for Heavy Workloads"
+      target_audience: "Backend Python Developers"
+      required_sections:
+        - "CPU-Bound Tasks vs IO-Bound Tasks"
+        - "GIL (Global Interpreter Lock) in Python"
+    expected:
+      required_keywords:
+        - "GIL"
+        - "multiprocessing"
+        - "threading"
+        - "CPU-bound"
+        - "IO-bound"
+      min_sections: 2
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+    difficulty: "medium"
+    tags:
+      - "blog"
+      - "python"
+      - "concurrency"
+
+  - task_id: "blog_local_task_002"
+    agent_target: "blog_researcher_writer_agent_local"
+    input:
+      topic: "Best Practices for Database Indexing in SQL Databases"
+      target_audience: "Software Engineers and Database Administrators"
+      required_sections:
+        - "What is a Database Index?"
+        - "Clustered vs Non-Clustered Indexes"
+        - "Avoiding Indexing Overhead"
+    expected:
+      required_keywords:
+        - "index"
+        - "SQL"
+        - "clustered"
+        - "query optimizer"
+        - "performance"
+      min_sections: 3
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+    difficulty: "hard"
+    tags:
+      - "blog"
+      - "sql"
+      - "database"

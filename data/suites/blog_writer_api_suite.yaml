@@ -1,0 +1,51 @@
+tasks:
+  - task_id: "blog_api_task_001"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Building APIs with Next.js Route Handlers"
+      target_audience: "Full-stack Web Developers"
+      required_sections:
+        - "Introduction to Route Handlers"
+        - "Handling GET and POST requests"
+    expected:
+      required_keywords:
+        - "Next.js"
+        - "Route Handlers"
+        - "GET"
+        - "POST"
+      min_sections: 2
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+    difficulty: "medium"
+    tags:
+      - "blog"
+      - "nextjs"
+      - "api"
+
+  - task_id: "blog_api_task_002"
+    agent_target: "blog_researcher_writer_agent"
+    input:
+      topic: "Introduction to Model Context Protocol (MCP)"
+      target_audience: "AI Engineers and Tool Developers"
+      required_sections:
+        - "What is Model Context Protocol?"
+        - "Core architecture of MCP"
+    expected:
+      required_keywords:
+        - "mcp"
+        - "protocol"
+        - "context"
+        - "server"
+        - "client"
+      min_sections: 2
+      must_have_citations: false
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+    difficulty: "hard"
+    tags:
+      - "blog"
+      - "ai"
+      - "mcp"
