@@ -22,14 +22,15 @@ st.set_page_config(
 st.markdown("""
 <style>
     .reportview-container {
-        background: #0e1117;
+        background: var(--background-color);
     }
     .metric-card {
-        background-color: #1f2937;
-        border: 1px solid #374151;
+        background-color: var(--secondary-background-color);
+        border: 1px solid rgba(128, 128, 128, 0.2);
         border-radius: 8px;
         padding: 15px;
         margin-bottom: 15px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
     .metric-value {
         font-size: 28px;
@@ -38,7 +39,8 @@ st.markdown("""
     }
     .metric-label {
         font-size: 14px;
-        color: #9ca3af;
+        color: var(--text-color);
+        opacity: 0.7;
     }
     .pass-badge {
         background-color: #065f46;

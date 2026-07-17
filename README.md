@@ -74,6 +74,15 @@ This will prompt you for:
 **Options:**
 - `--no-judge` — Skip LLM-as-Judge scoring; use deterministic checks only
 
+#### Launch the Web Dashboard UI
+
+You can launch the interactive Streamlit dashboard to run task suites, visualize results, inspect execution traces, and compare runs visually:
+
+```bash
+streamlit run streamlit_app.py --server.port 3000
+```
+Then open `http://localhost:3000` in your web browser.
+
 ---
 
 ## 🏗️ Architecture
@@ -642,11 +651,11 @@ pytest tests/ --cov=src --cov-report=html
 - ✅ Metrics aggregation & reporting
 - ✅ Regression detection
 
-### Phase 2: Observability
-- Interactive dashboard (Streamlit)
-- Trace visualization
-- Trend analysis across versions
-- Judge calibration UI
+### Phase 2: Observability (Completed)
+- [x] Interactive dashboard (Streamlit)
+- [x] Trace visualization
+- [x] Trend analysis across versions
+- [x] Judge calibration UI
 
 ### Phase 3: Production Ready
 - REST API for remote runs
