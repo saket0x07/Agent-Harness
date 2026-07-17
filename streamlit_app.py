@@ -77,6 +77,83 @@ st.markdown("""
         margin: 5px 0;
         border-radius: 0 6px 6px 0;
     }
+    
+    /* Modern, premium custom sidebar navigation styling */
+    div[data-testid="stRadio"] > div[role="radiogroup"] {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-top: 10px;
+    }
+
+    div[data-testid="stRadio"] > label[data-testid="stWidgetLabel"] {
+        display: block !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.08em !important;
+        color: var(--text-color) !important;
+        opacity: 0.6;
+        margin-bottom: 12px !important;
+        padding-left: 4px !important;
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    div[data-testid="stRadio"] label[data-baseweb="radio"] {
+        background-color: var(--secondary-background-color) !important;
+        border: 1px solid rgba(128, 128, 128, 0.2) !important;
+        border-radius: 12px;
+        padding: 12px 16px !important;
+        margin: 0 !important;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        width: 100%;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    /* Hide the standard radio circle */
+    div[data-testid="stRadio"] label[data-baseweb="radio"] > div:first-child {
+        display: none !important;
+    }
+
+    div[data-testid="stRadio"] label[data-baseweb="radio"] p {
+        color: var(--text-color) !important;
+        opacity: 0.8;
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        transition: all 0.2s ease;
+    }
+
+    div[data-testid="stRadio"] label[data-baseweb="radio"]:hover {
+        background-color: var(--secondary-background-color) !important;
+        border-color: rgba(99, 102, 241, 0.5) !important;
+        transform: translateX(4px);
+    }
+    
+    div[data-testid="stRadio"] label[data-baseweb="radio"]:hover p {
+        opacity: 1;
+    }
+
+    div[data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%) !important;
+        border-color: #6366f1 !important;
+        box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.3);
+        transform: translateX(6px);
+    }
+
+    div[data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) p {
+        color: #ffffff !important;
+        opacity: 1 !important;
+        font-weight: 600 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
