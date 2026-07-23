@@ -90,17 +90,12 @@ class GraderEngine:
         llm_judge_score = evaluate_subjective_quality(self.task, result) if has_llm_judge else None
         
         # 4. Compute overall Pass status
-        # Must pass all deterministic checks and have no detected trajectory loop/termination failures
         det_pass = all(v for k, v in deterministic_checks.items() if k.endswith("_pass"))
         no_traj_failures = not trajectory_checks["infinite_loop"] and not trajectory_checks["premature_termination"]
         
-        # Also, if we have an active LLM judge, we might enforce a minimum score (e.g. >= 3/5 on dimensions)
-        # But for MVP, pass/fail is determined by deterministic + trajectory checks
         is_pass = det_pass and no_traj_failures
         
-        # If trajectory checks found a failure but deterministic checks also failed, prioritize trajectory classification
         if not no_traj_failures:
-            # failure_mode is set inside trajectory checks
             pass
         elif not det_pass:
             trajectory_checks["failure_mode"] = "missed_issue" # Standard tag for missing expected goals

@@ -1,0 +1,76 @@
+tasks:
+  - task_id: "hiring_task_001"
+    agent_target: "agentic_hiring_workflow"
+    input:
+      action: "create_job"
+      hiring_request:
+        job_title: "Senior AI/ML Engineer"
+        department: "AI Research & Development"
+        location: "Remote"
+        experience_level: "Senior (5+ years)"
+        key_responsibilities:
+          - "Design and deploy scalable LLM & LangChain agentic workflows."
+          - "Optimize hybrid RAG vector search indices and fine-tune model evaluation metrics."
+          - "Collaborate with backend engineering teams on FastAPI integration."
+        required_skills:
+          - "Python"
+          - "FastAPI"
+          - "LangChain / LangGraph"
+          - "PyTorch or TensorFlow"
+        preferred_skills:
+          - "FAISS / Qdrant"
+          - "Docker"
+          - "Kubernetes"
+        salary_range: "$140,000 - $180,000"
+    expected:
+      required_keywords:
+        - "Senior"
+        - "AI/ML"
+        - "Engineer"
+        - "Python"
+        - "FastAPI"
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+    difficulty: "medium"
+    tags:
+      - "hiring"
+      - "jd_generation"
+      - "ai_ml"
+
+  - task_id: "hiring_task_002"
+    agent_target: "agentic_hiring_workflow"
+    input:
+      action: "create_job"
+      hiring_request:
+        job_title: "Full Stack Python & React Developer"
+        department: "Product Engineering"
+        location: "Hybrid / San Francisco, CA"
+        experience_level: "Mid-Senior (3-5 years)"
+        key_responsibilities:
+          - "Develop intuitive Streamlit and Web dashboards for AI workflow automation."
+          - "Build robust REST APIs using FastAPI and Pydantic."
+          - "Maintain relational SQLite & PostgreSQL data models."
+        required_skills:
+          - "Python"
+          - "FastAPI"
+          - "React"
+          - "TypeScript"
+        preferred_skills:
+          - "TailwindCSS"
+          - "Streamlit"
+        salary_range: "$120,000 - $150,000"
+    expected:
+      required_keywords:
+        - "Full Stack"
+        - "Developer"
+        - "Python"
+        - "FastAPI"
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+    difficulty: "easy"
+    tags:
+      - "hiring"
+      - "jd_generation"
+      - "fullstack"

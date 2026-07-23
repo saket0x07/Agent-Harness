@@ -1,724 +1,373 @@
-# Agent-Harness 🤖
+# 🤖 Agent-Harness v1.2 🚀⚡📊
 
-> **Evaluate, trace, and regression-test AI agents with deterministic and LLM-judge grading at scale.**
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?style=flat&logo=python)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.35+-FF4B4B.svg?style=flat&logo=streamlit)](https://streamlit.io/)
+[![LangChain](https://img.shields.io/badge/LangChain/LangGraph-0.1.0+-1C3C3C.svg?style=flat)](https://www.langchain.com/)
+[![Pydantic](https://img.shields.io/badge/Pydantic-v2.0%2B-E92063.svg?style=flat&logo=pydantic)](https://docs.pydantic.dev/)
+[![SQLite](https://img.shields.io/badge/SQLite-Database-003B57.svg?style=flat&logo=sqlite)](https://www.sqlite.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat)](LICENSE)
 
-An evaluation platform that runs AI agents against benchmark task suites, captures their complete execution trace (not just the final answer), and scores them on task success, cost, latency, and failure modes.
+> **The enterprise-grade platform to run, trace, evaluate, grade, and regression-test AI agents across complex multi-step trajectories.**
 
-## 📋 Overview
+Evaluating a standard LLM is simple (one prompt in, one response out). Evaluating an **AI Agent** is fundamentally different—agents do not just generate text; they navigate graph states, invoke external tools, execute APIs, and follow dynamic execution loops. 
 
-Evaluating a model is straightforward: one input, one output, compare against a label or a human judge. Evaluating an **agent** is fundamentally different—agents don't produce answers, they produce trajectories. You need to see every step: what tools they called, what they said, where they went wrong.
-
-Agent-Harness solves the core problem: **How do you know if your agent is actually getting better, or just getting different?**
-
-### Key Capabilities
-
-- 🔍 **Full Execution Tracing** — Capture every LLM call, tool call, and state transition with token counts, cost, and latency
-- 🎯 **Multi-Level Grading** — End-to-end success, trajectory soundness, and component-level failure classification
-- 🚨 **Regression Detection** — Automatically compare agent versions to catch silent quality drops
-- 📊 **Rich Taxonomy** — Classify failures systematically (wrong tool, infinite loops, hallucination, context loss, etc.)
-- 🔌 **Framework Agnostic** — Adapter interface works with LangGraph, raw Python loops, or any agent architecture
-- 📈 **Metrics & Reports** — Success rate, average cost/latency, failure-mode distribution, and trend analysis
+**Agent-Harness** captures the full execution trajectory of any AI agent (not just the final answer) and benchmarks performance using **deterministic rules**, **LLM-as-a-Judge rubrics**, **cost & latency tracking**, and **automated regression detection**.
 
 ---
 
-## 🚀 Quick Start
+## 🌟 Key Highlights & Innovations
 
-### Prerequisites
-
-- Python 3.10+
-- SQLite3 (included with Python)
-
-### Installation
-
-```bash
-git clone https://github.com/saket0x07/Agent-Harness.git
-cd Agent-Harness
-pip install -r requirements.txt
-```
-
-### Basic Usage
-
-#### Run a Task Suite
-
-```bash
-python main.py run \
-  --suite data/tasks/code_review_suite.yaml \
-  --agent code_review_agent \
-  --version v1.0 \
-  --db data/harness.db
-```
-
-**Options:**
-- `--suite, -s` — Path to YAML/JSON task suite file or directory *(required)*
-- `--agent, -a` — Target agent identifier *(required)*
-- `--version, -v` — Version tag for the agent configuration (default: `v1.0`)
-- `--db, -d` — Path to SQLite database (default: `data/harness.db`)
-- `--limit, -l` — Maximum number of tasks to execute (optional)
-
-#### Interactive Evaluation
-
-Run a single custom query interactively and get immediate feedback:
-
-```bash
-python main.py interactive \
-  --agent code_review_agent \
-  --version v1.0-dev \
-  --db data/harness.db
-```
-
-This will prompt you for:
-- Blog topic/title
-- Target audience
-- Expected keywords (optional)
-
-**Options:**
-- `--no-judge` — Skip LLM-as-Judge scoring; use deterministic checks only
-
-#### Launch the Web Dashboard UI
-
-You can launch the interactive Streamlit dashboard to run task suites, visualize results, inspect execution traces, and compare runs visually:
-
-```bash
-streamlit run streamlit_app.py --server.port 3000
-```
-Then open `http://localhost:3000` in your web browser.
+* 🔍 **Full Trajectory Execution Tracing**: Captures every node transition, tool call, HTTP request, token breakdown (`tokens_in`/`tokens_out`), step-level latency, and estimated USD cost.
+* 🔌 **Decoupled Framework-Agnostic Adapters**: Connects any agent architecture (LangGraph, FastAPI REST endpoints, AutoGen, CrewAI, or raw Python loops) via standardized protocol adapters (`AgentAdapter`).
+* 🎯 **Two-Tier Grading Engine**:
+  * **Level 1 — Deterministic Rule-Based Checks**: Fast, zero-cost keyword matching, schema validation, and constraint checking.
+  * **Level 2 — LLM-as-a-Judge Rubric Evaluation**: Deep technical accuracy, clarity, and completeness evaluation using state-of-the-art judge models.
+* 📊 **Automated Failure Mode Taxonomy**: Systematically flags agent failures (`WRONG_TOOL`, `INFINITE_LOOP`, `HALLUCINATED_RESULT`, `PREMATURE_TERMINATION`, `CASCADING_ERROR`, `CONTEXT_LOSS`, `MISSED_ISSUE`).
+* 🚨 **Automated Regression Signals**: Automatically detects performance degradations, cost spikes, latency increases, or failure rate jumps between agent versions (`v1.0` vs `v1.1`).
+* 🎨 **Interactive Streamlit Web Dashboard & Trace Viewer**: Visualize runs, compare metrics side-by-side, view step-by-step execution span trees, and grade interactively.
+* 💼 **Native Project Integrations**: Pre-built adapters for **Agentic Hiring Workflow** (port 8000/8501), **Document Retrieval System (DRS)**, and **Blog Researcher & Writer Agent**.
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ System Architecture & Workflow
 
+```mermaid
+flowchart TD
+    subgraph Suite ["📋 Task Benchmark Suite"]
+        TS["data/suites/*.yaml"]
+        Spec["TaskSpec (Inputs, Expected, Rubrics)"]
+    end
+
+    subgraph Harness ["🚀 Agent Evaluation Harness"]
+        Runner["src/runner.py Engine"]
+        Registry["ADAPTER_REGISTRY"]
+        Tracer["TraceCollector & TraceSpan"]
+    end
+
+    subgraph Adapters ["🔌 Protocol Adapter Layer"]
+        A1["AgenticHiringAdapter (REST API :8000)"]
+        A2["DRSAdapter (Document Retrieval)"]
+        A3["BlogWriterAPIAdapter (LangGraph REST)"]
+        A4["MockAgentAdapter (Testing)"]
+    end
+
+    subgraph SystemUnderTest ["🤖 Agent Under Test"]
+        FastAPI["FastAPI / LangGraph Server"]
+        PythonLoop["Python Execution Graph"]
+    end
+
+    subgraph Storage ["💾 Persistence & Storage"]
+        DB[(SQLite data/harness.db)]
+        Traces[("traces Table (Spans & Costs)")]
+        Runs[("runs Table (Metrics & Reports)")]
+    end
+
+    subgraph Analytics ["📊 Grading & Observability"]
+        Grader["GraderEngine (Deterministic + Judge)"]
+        CLI["CLI & Trace Viewer Script"]
+        Dashboard["Streamlit Web Dashboard"]
+    end
+
+    TS --> Spec --> Runner
+    Runner --> Registry --> Adapters
+    Adapters -->|HTTP / Function Call| SystemUnderTest
+    SystemUnderTest -->|Response & Intermediate State| Adapters
+    Adapters --> Tracer --> DB
+    Tracer --> Grader --> DB
+    DB --> CLI & Dashboard
 ```
-Task Suite (YAML/JSON)
-    ↓
-Agent Adapter Layer (unified interface)
-    ↓
-Instrumented Execution (full trace capture)
-    ↓
-Trace Store (SQLite)
-    ↓
-Grading Engine (deterministic + LLM judge)
-    ↓
-Metrics Aggregator (success rate, cost, latency)
-    ↓
-Regression Engine (version comparison)
-    ↓
-Report & Dashboard
-```
-
-### Core Components
-
-| Layer | Purpose | Key Files |
-|-------|---------|-----------|
-| **Adapter Layer** | Wraps agents behind common `run(task) -> AgentResult` interface | `src/runner.py` |
-| **Instrumentation** | Captures every LLM/tool call as `TraceEvent` spans | `src/core/instrumentation.py` |
-| **Storage** | Structured, queryable execution logs in SQLite | `src/storage/db.py` |
-| **Grading** | Deterministic checks + LLM-as-Judge scoring | `src/grading/grader.py` |
-| **Metrics** | Aggregates results into `MetricsReport` | `src/metrics/aggregator.py` |
 
 ---
 
-## 📝 Task Suite Format
+## 🔍 Execution Tracing & Data Model
 
-Tasks are defined in YAML or JSON. Here's an example:
-
-```yaml
-task_id: "codereview_001"
-agent_target: "code_review_agent"
-input:
-  pr_diff_path: "data/prs/001.diff"
-expected:
-  injected_issues:
-    - type: "sql_injection"
-      line: 42
-    - type: "n_plus_one_query"
-      line: 88
-grading_strategy:
-  - "deterministic_line_match"
-  - "llm_judge_explanation_quality"
-difficulty: "medium"
-tags:
-  - security
-  - performance
-```
-
-### TaskSpec Fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `task_id` | string | Unique identifier for the task |
-| `agent_target` | string | Name of the agent to evaluate |
-| `input` | dict | Agent input (task-specific structure) |
-| `expected` | dict | Expected outcome for grading |
-| `grading_strategy` | list | Which grading methods to apply |
-| `difficulty` | string | Task difficulty: `easy`, `medium`, or `hard` |
-| `tags` | list | Task categories for analysis |
-
----
-
-## 🔍 Tracing & Execution Flow
-
-When an agent runs, every action is captured as a `TraceEvent`:
+When an agent runs a task, **Agent-Harness** captures a hierarchical tree of `TraceEvent` spans:
 
 ```json
 {
-  "trace_id": "run_2026-07-14_001",
-  "task_id": "codereview_001",
-  "span_id": "span_042",
-  "parent_span_id": "span_040",
-  "node": "security_agent",
-  "type": "tool_call",
-  "start_ts": 1752480000123,
-  "end_ts": 1752480001876,
-  "tokens_in": 412,
-  "tokens_out": 88,
-  "cost_usd": 0.0031,
-  "tool_name": "grep_code",
-  "tool_args": { "pattern": "SELECT .* WHERE" },
-  "output_summary": "3 matches found",
+  "trace_id": "trace_hiring_task_001_a03e71",
+  "span_id": "span_9281a",
+  "parent_span_id": null,
+  "node": "jd_generation_agent",
+  "type": "llm_call",
+  "start_ts": 1784809223100,
+  "end_ts": 1784809251267,
+  "tokens_in": 250,
+  "tokens_out": 800,
+  "cost_usd": 0.00150,
+  "tool_name": "langgraph_invoke",
+  "tool_args": { "role": "Senior AI/ML Engineer", "department": "R&D" },
+  "output_summary": "Generated JD for job_id 'b5f4a0a9-e1c9-40e8-a1a0-f8fb231b54a1' (status: PENDING_APPROVAL)",
   "error": null
 }
 ```
 
-The trace is a **tree of spans**, where each span represents:
-- An LLM call (with model, tokens, cost)
-- A tool invocation (with arguments and output)
-- A state transition or decision point
-- A sub-agent execution
+### Trace Span Taxonomy
 
-This enables deep debugging: you don't just know the agent failed, you know *which step* failed, *how long it took*, and *what it cost*.
-
----
-
-## 🎯 Grading System
-
-### Two-Tier Grading
-
-#### 1. **Deterministic Checks** (Preferred)
-No LLM call required—fast, free, and unbiased:
-
-- ✅ Does the output match an expected schema?
-- ✅ Were required fields populated?
-- ✅ Did the agent flag all injected security issues?
-- ✅ Is the numerical result within acceptable tolerance?
-
-#### 2. **LLM-as-Judge** (For Subjective Quality)
-Use Claude Sonnet 5 for dimensions without objective ground truth:
-
-- Does the explanation make sense?
-- Is the writing clear and well-structured?
-- Did the agent show its reasoning?
-
-**Design principle:** Deterministic checks should be the majority of your grading pipeline. LLM judge is only for genuinely subjective dimensions.
-
-### Judge Calibration
-
-Before trusting any LLM judge scores:
-
-1. **Hand-grade 20–30 trajectories** yourself using the same rubric
-2. **Run the LLM judge** on the same 20–30
-3. **Calculate agreement** (simple % match or Cohen's kappa)
-4. **Iterate on the rubric** if agreement is low (ambiguous rubric is the usual culprit, not a bad model)
-
-Only scale up grading after achieving ≥80% agreement.
+| Span Node Type | Description | Key Attributes Captured |
+| :--- | :--- | :--- |
+| `api_call` | External HTTP REST request to local or remote server | URL, payload summary, status code, latency |
+| `llm_call` | Large Language Model generation step | `tokens_in`, `tokens_out`, model cost (USD), output summary |
+| `tool_call` | Invocation of an agentic tool (search, vector index, database) | `tool_name`, `tool_args`, result count, execution duration |
+| `state_transition` | Internal graph node state update (LangGraph router, reducer) | Previous state, next node, state mutations |
 
 ---
 
-## 📊 Failure Taxonomy
+## 🎯 Grading Engine & Failure Taxonomy
 
-Classify failures systematically instead of binary pass/fail:
+### 1. Deterministic Checks (Rule-Based)
+Fast, zero-cost, objective validation executed before invoking an LLM judge:
+* **Keyword Matching**: Validates required domain keywords in candidate output.
+* **Citation Verification**: Asserts that retrieved documents include required sources/citations.
+* **Schema Validation**: Ensures JSON responses contain required keys and conform to Pydantic models.
 
-| Failure Mode | Pattern | Example |
-|--------------|---------|---------|
-| `WRONG_TOOL` | Selected correct tool but with wrong args, or wrong tool altogether | Searching for code smell when you need to check syntax |
-| `HALLUCINATED_RESULT` | Treated empty/error tool output as success | Tool returned "error: not found" but agent proceeded as if found |
-| `INFINITE_LOOP` | Repeated same tool + same args without adapting | Tried grep 5 times with identical arguments |
-| `PREMATURE_TERMINATION` | Declared done before satisfying the task | Stopped after finding 1 issue when task required 3 |
-| `CASCADING_ERROR` | One wrong early assumption propagates downstream | Misidentified file type; all downstream analysis invalid |
-| `CONTEXT_LOSS` | Forgot earlier stated constraints | Ignored "security-critical code only" constraint mid-run |
-| `MISSED_ISSUE` | Failed to catch what it should have (domain-specific) | Code review agent missed the SQL injection entirely |
+### 2. LLM-as-a-Judge Rubric Grading
+Evaluates subjective dimensions using structured LLM prompts:
+* **Technical Accuracy (1-5)**: Asserts domain correctness of generated code, JDs, or responses.
+* **Clarity & Structure (1-5)**: Evaluates formatting, readability, and organization.
+* **Completeness (1-5)**: Verifies all aspects of recruiter or user prompt were answered.
 
-Most modes are detectable with simple rules (no LLM call needed):
-- `INFINITE_LOOP` = identical tool name + args N times consecutively
-- `HALLUCINATED_RESULT` = tool returned error but agent used the output
-- `PREMATURE_TERMINATION` = trace ends before expected checks complete
+### 3. Trajectory Failure Classification
 
----
-
-## 📈 Metrics & Reports
-
-After each run, you get a `MetricsReport`:
-
-```json
-{
-  "agent_name": "code_review_agent",
-  "agent_version": "v1.0",
-  "run_id": "run_2026-07-14_001",
-  "timestamp": "2026-07-14T15:30:00Z",
-  "total_tasks": 15,
-  "success_rate": 0.87,
-  "average_cost_usd": 0.0412,
-  "average_latency_ms": 3240,
-  "failure_mode_counts": {
-    "missed_issue": 2,
-    "infinite_loop": 1
-  },
-  "detailed_results": [
-    { "task_id": "codereview_001", "is_pass": true, ... },
-    { "task_id": "codereview_002", "is_pass": false, ... }
-  ]
-}
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│                        FAILURE TAXONOMY MAP                            │
+├───────────────────────┬────────────────────────────────────────────────┤
+│ Failure Mode          │ Trigger Condition / Detection                  │
+├───────────────────────┼────────────────────────────────────────────────┤
+│ WRONG_TOOL            │ Selected inappropriate tool or invalid arguments│
+│ HALLUCINATED_RESULT   │ Proceeded as success on tool error / missing data│
+│ INFINITE_LOOP         │ Repeated identical tool & args >= 3 times      │
+│ PREMATURE_TERMINATION │ Stopped before answering all task constraints  │
+│ CASCADING_ERROR       │ Early bad node assumption invalidated output   │
+│ CONTEXT_LOSS          │ Overwrote or ignored initial prompt rules      │
+│ MISSED_ISSUE          │ Failed to catch domain-specific ground truth   │
+└───────────────────────┴────────────────────────────────────────────────┘
 ```
 
-Reports include:
-- **Success rate** — % of tasks passed
-- **Cost per run** — Aggregated LLM + tool usage
-- **Latency** — E2E execution time
-- **Failure breakdown** — Which failure modes occurred most
-- **Per-task details** — Trace IDs for deep debugging
+---
+
+## 🔌 Integrated Agent Projects
+
+**Agent-Harness** includes built-in adapters and evaluation suites for:
+
+### 1. Agentic Hiring Workflow (`agentic_hiring_workflow`)
+- **Backend API**: Running on `http://localhost:8000` (FastAPI)
+- **Frontend UI**: Running on `http://localhost:8501` (Streamlit)
+- **Capabilities Tested**: AI Job Description Generation, PDF compilation, and Hybrid Resume Retrieval (FAISS + BM25 + Cross-Encoder).
+
+### 2. Document Retrieval System (`drs_agent`)
+- **Capabilities Tested**: Dense vector search, metadata filtering, document citation generation, and question answering.
+
+### 3. Blog Researcher & Writer (`blog_researcher_writer_agent`)
+- **Capabilities Tested**: LangGraph stateful multi-node execution (Router -> Researcher -> Planner -> Parallel Section Workers -> Reducer).
 
 ---
 
-## 🚨 Regression Detection
+## 💻 Tech Stack
 
-Define thresholds for significant drops:
+| Component | Technology / Library | Purpose |
+| :--- | :--- | :--- |
+| **CLI & Execution Core** | Python 3.10+, Click, Rich | Command line interface, execution engine, rich terminal rendering |
+| **Data Contracts** | Pydantic v2 | Strict schema validation for task specs, trace events, and reports |
+| **Storage & Persistence** | SQLite3, `sqlite3` driver | Zero-config relational storage for task suites, trace spans, and runs |
+| **LLM Integrations** | Google GenAI SDK, LangChain, OpenAI | Multi-provider LLM support for agent runs and LLM judge scoring |
+| **Web Dashboard UI** | Streamlit | Visual benchmark execution dashboard, trace tree view, run comparison |
+| **HTTP Communication** | Requests, HTTPX | Synchronous and asynchronous REST calls to agent backends |
+
+---
+
+## ⚙️ Installation & Setup
+
+### Prerequisites
+* **Python 3.10+** installed
+* **Git** installed
+* **OpenAI / OpenRouter / Gemini API Keys**
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/saket0x07/Agent-Harness.git
+cd Agent-Harness
+```
+
+### 2. Environment Setup
+Create a `.env` file in the root directory:
+```bash
+cp .env.example .env
+```
+Populate `.env` with your API keys:
+```env
+OPENAI_API_KEY=your_openai_api_key
+GOOGLE_API_KEY=your_google_gemini_api_key
+OPENROUTER_API_KEY=your_openrouter_api_key
+
+# Database Destination
+HARNESS_DB_PATH=data/harness.db
+```
+
+### 3. Virtual Environment & Dependencies
+```bash
+python -m venv .venv
+# Activate on Windows:
+.\.venv\Scripts\activate
+# Activate on Linux/macOS:
+source .venv/bin/activate
+
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+---
+
+## 🚀 Running Benchmark Evaluations
+
+### 1. Execute a Benchmark Task Suite (CLI)
+
+Run evaluation against the **Agentic Hiring Workflow** running on port `8000`:
+```powershell
+python main.py run --suite data/suites/agentic_hiring_suite.yaml --agent agentic_hiring_workflow --version v1.0
+```
+
+Run evaluation against the **Document Retrieval System**:
+```powershell
+python main.py run --suite data/suites/drs_suite.yaml --agent drs --version v1.0
+```
+
+### 2. Interactive Single-Query Evaluation
+
+Run an interactive query and watch traces generate in real-time:
+```powershell
+python main.py interactive --agent agentic_hiring_workflow --version v1.0-interactive
+```
+
+### 3. Inspect Detailed Execution Trace Trees
+
+Run the trace viewer script to inspect span-by-span latency, cost, and tool arguments for the latest run:
+```powershell
+python scripts/view_traces.py
+```
+
+### 4. Launch the Web Dashboard UI
+
+Launch the Streamlit web dashboard to visually execute benchmark suites and compare runs:
+```powershell
+streamlit run streamlit_app.py --server.port 8502
+```
+Open your web browser at `http://localhost:8502`.
+
+---
+
+## 📝 Task Suite Format (`.yaml`)
+
+Define benchmark tasks under `data/suites/`:
 
 ```yaml
-regression_thresholds:
-  success_rate_drop: 0.05          # Alert if success rate drops >5%
-  cost_increase_percent: 50        # Alert if avg cost increases >50%
-  new_infinite_loops: 1            # Alert if any new infinite loops occur
-  new_failure_modes: true          # Alert if new failure modes appear
-```
-
-On each run, the harness compares against the previous baseline:
-
-```
-Baseline (v1.0): 92% success, $0.035 avg cost
-Current (v1.1):  83% success, $0.052 avg cost
-→ REGRESSION TRIGGERED: success_rate dropped 9% (threshold: 5%)
-```
-
-This is the feature that turns a one-off eval script into production infrastructure.
-
----
-
-## 🔌 Building Adapters
-
-### Adapter Interface
-
-Every agent (regardless of framework) gets one adapter:
-
-```python
-from src.core.schemas import TaskSpec, AgentResult, TraceEvent
-
-class MyAgentAdapter:
-    def run(self, task: TaskSpec) -> AgentResult:
-        """
-        Execute the task and return the result with full trace.
-        
-        Args:
-            task: The task spec with input, expected outcome, grading strategy
-            
-        Returns:
-            AgentResult with:
-              - final_output: The agent's answer
-              - trace: List of TraceEvent spans capturing every LLM/tool call
-              - total_cost_usd: Total API cost for this run
-              - total_latency_ms: Total wall-clock time
-        """
-        # 1. Initialize agent with task inputs
-        # 2. Set up instrumentation hook to capture spans
-        # 3. Run the agent's main loop
-        # 4. Collect trace events from instrumentation
-        # 5. Return AgentResult
-        pass
-```
-
-### Registration
-
-Register adapters in the `ADAPTER_REGISTRY`:
-
-```python
-from src.runner import ADAPTER_REGISTRY
-
-ADAPTER_REGISTRY["my_agent"] = MyAgentAdapter
+tasks:
+  - task_id: "hiring_task_001"
+    agent_target: "agentic_hiring_workflow"
+    input:
+      action: "create_job"
+      hiring_request:
+        role: "Senior AI/ML Engineer"
+        department: "AI R&D"
+        experience: "5+ years"
+        location: "Remote"
+        employment_type: "full_time"
+        work_mode: "remote"
+        required_skills: ["Python", "FastAPI", "LangGraph"]
+        preferred_skills: ["FAISS", "Docker"]
+    expected:
+      required_keywords:
+        - "Senior"
+        - "AI/ML"
+        - "Python"
+    grading_strategy:
+      - "deterministic_keyword_match"
+      - "llm_judge_technical_accuracy"
+    difficulty: "medium"
+    tags:
+      - "hiring"
+      - "jd_generation"
 ```
 
 ---
 
 ## 📂 Project Structure
 
-```
+```text
 Agent-Harness/
-├── main.py                          # CLI entry point (run, interactive)
-├── requirements.txt                 # Dependencies
-├── README.md                         # This file
-├── prd.md                            # Full product requirements
-├── changes_log.md                    # Changelog
-│
-├── src/
-│   ├── core/
-│   │   ├── schemas.py                # Pydantic models (TaskSpec, AgentResult, etc.)
-│   │   ├── instrumentation.py        # Span capture & tracing
-│   │   └── interfaces.py             # Abstract interfaces
-│   │
-│   ├── storage/
-│   │   ├── db.py                     # SQLite schema & queries
-│   │   └── migrations.py             # Schema versions
-│   │
-│   ├── grading/
-│   │   ├── grader.py                 # Deterministic + LLM judge
-│   │   ├── deterministic.py          # Rule-based checks
-│   │   └── judge.py                  # Claude-based judging
-│   │
-│   ├── metrics/
-│   │   └── aggregator.py             # MetricsReport generation
-│   │
-│   ├── runners/
-│   │   ├── code_review_adapter.py    # Code Review Agent adapter
-│   │   ├── research_adapter.py       # Research Agent adapter
-│   │   └── registry.py               # Adapter registration
-│   │
-│   └── runner.py                    # Suite orchestration & execution
-│
-├── tests/
-│   ├── test_adapters.py             # Adapter tests
-│   ├── test_grading.py              # Grading engine tests
-│   └── test_regression.py           # Regression detection tests
-│
 ├── data/
-│   ├── tasks/                       # Task suite YAML/JSON files
-│   │   └── example_suite.yaml
-│   ├── prs/                         # Test data (PR diffs, etc.)
-│   └── harness.db                   # SQLite database
-│
-└── scripts/
-    ├── view_traces.py               # Query & display execution traces
-    ├── compare_versions.py          # Compare two agent versions
-    └── calibrate_judge.py           # Judge calibration tool
+│   ├── suites/                      # Benchmark Task Suite YAML files
+│   │   ├── agentic_hiring_suite.yaml # Agentic Hiring Workflow suite
+│   │   ├── drs_suite.yaml            # Document Retrieval System suite
+│   │   ├── blog_writer_api_suite.yaml# Blog Writer API suite
+│   │   └── sample_suite.yaml         # Reference benchmark suite
+│   └── harness.db                    # SQLite Database (runs, tasks, traces, grading)
+├── docs/
+│   └── connect_new_agent.md         # Step-by-step guide to connect new agent projects
+├── scripts/
+│   ├── view_traces.py               # Trace span viewer CLI utility
+│   ├── compare_versions.py          # Version regression comparison tool
+│   └── calibrate_judge.py           # LLM judge calibration script
+├── src/
+│   ├── adapters/                    # Framework & API Protocol Adapters
+│   │   ├── base.py                  # AgentAdapter protocol definition
+│   │   ├── agentic_hiring_adapter.py# Adapter for Agentic-Hiring-Workflow (:8000)
+│   │   ├── drs_adapter.py           # Adapter for DRS document retrieval
+│   │   ├── blog_writer_api.py       # Adapter for Blog Writer API
+│   │   └── mock_agent.py            # Mock adapter for unit testing
+│   ├── core/
+│   │   ├── schemas.py               # Pydantic schemas (TaskSpec, TraceEvent, etc.)
+│   │   └── instrumentation.py       # Span collection logic
+│   ├── grading/
+│   │   ├── grader.py                # GraderEngine orchestrator
+│   │   ├── deterministic.py         # Keyword & rule validation checks
+│   │   └── judge.py                 # LLM-as-a-Judge rubric engine
+│   ├── storage/
+│   │   ├── db.py                    # SQLite database migrations & queries
+│   │   └── models.py                # Storage data models
+│   ├── tracing/
+│   │   └── tracer.py                # TraceCollector & trace_span context managers
+│   └── runner.py                    # Benchmark runner & ADAPTER_REGISTRY
+├── tests/                           # Pytest unit & integration test suite
+├── main.py                          # Click CLI entrypoint (run, interactive)
+├── streamlit_app.py                 # Streamlit Web Dashboard Application
+├── requirements.txt                 # Python dependencies
+├── .env.example                     # Environment variables template
+└── README.md                        # Project Documentation
 ```
 
 ---
 
-## 🛠️ Dependencies
+## 🧪 Testing & Verification
 
-| Package | Purpose |
-|---------|---------|
-| `pydantic>=2.0` | Data validation & serialization |
-| `pyyaml>=6.0` | Task suite parsing |
-| `click>=8.0` | CLI framework |
-| `rich>=13.0` | Pretty terminal output |
-| `python-dotenv>=1.0.0` | Environment variable management |
-| `requests>=2.20.0` | HTTP client |
-| `google-genai>=0.1.0` | Google Gemini API |
-| `langchain-core>=0.2.0` | LangChain core |
-| `langchain-openai>=0.1.0` | OpenAI integration |
-| `langgraph>=0.1.0` | LangGraph (for graph-based agents) |
-| `tavily-python>=0.3.0` | Web search tool |
-| `pillow>=10.0.0` | Image processing |
-| `huggingface_hub>=0.33.0` | HuggingFace model access |
-| `streamlit>=1.35.0` | Web dashboard (optional) |
-| `fastapi>=0.100.0` | REST API backend (optional) |
-| `uvicorn>=0.23.0` | ASGI server (optional) |
-
----
-
-## 📚 Examples
-
-### Example 1: Evaluating a Code Review Agent
-
-```bash
-# Run code review agent against 15 security + performance tasks
-python main.py run \
-  --suite data/tasks/code_review_full.yaml \
-  --agent code_review_agent \
-  --version v1.2 \
-  --limit 15
-
-# Output:
-# ┌─ Suite Run Outcomes: run_2026_07_14_001 ─┐
-# │ Task ID           Passed  Spans Captured │
-# │ codereview_001    Yes     24              │
-# │ codereview_002    No      19              │
-# │ ...                                      │
-# └────────────────────────────────────────────┘
-# Success Rate: 86.7%
+Run all unit tests using `pytest`:
+```powershell
+pytest -v
 ```
 
-### Example 2: Interactive Evaluation
-
-```bash
-python main.py interactive --agent blog_writer_agent --no-judge
-
-# Prompts:
-# ✍️ Enter the blog topic/title: "How to Build Reliable AI Agents"
-# 👥 Enter target audience: "ML Engineers"
-# 🔑 Enter expected keywords (comma-separated): "evaluation,tracing,regression"
-
-# Output:
-# 🚀 Running interactive task: interactive_a1b2c3...
-# ...
-# 🏁 Execution Completed
-# Outcome: Passed
-# ⏱️ Latency: 4521ms | 💳 Cost: $0.01234
-```
-
-### Example 3: Regression Detection
-
-```bash
-# Previous run (baseline)
-python main.py run --suite tasks.yaml --agent my_agent --version v1.0
-
-# After a prompt change
-python main.py run --suite tasks.yaml --agent my_agent --version v1.1
-
-# Output:
-# ⚠️  REGRESSION DETECTED:
-# Metric: success_rate
-# v1.0:  92%
-# v1.1:  83%
-# Delta: -9% (threshold: -5%)
-# Likely Component: retrieval_agent
+Verify Python syntax across all core modules:
+```powershell
+python -m py_compile main.py streamlit_app.py src/runner.py
 ```
 
 ---
 
-## 🔧 Configuration
+## 🤝 How to Connect a New Agent
 
-Create a `.env` file for API keys and configuration:
+Connecting a new agent project takes 3 steps:
 
-```bash
-# LLM Models
-OPENAI_API_KEY=sk-...
-GOOGLE_API_KEY=...
-ANTHROPIC_API_KEY=sk-ant-...
+1. **Create a Task Suite**: Define tasks in `data/suites/my_agent_suite.yaml`.
+2. **Implement an Adapter**: Inherit from `AgentAdapter` in `src/adapters/my_agent_adapter.py` and implement `run(task)`.
+3. **Register in Registry**: Add your class to `ADAPTER_REGISTRY` in `src/runner.py`.
 
-# Judge Model (Claude Sonnet 5)
-JUDGE_MODEL=claude-3-5-sonnet-20241022
-
-# Database
-HARNESS_DB_PATH=data/harness.db
-
-# Regression Thresholds
-REGRESSION_SUCCESS_RATE_THRESHOLD=-0.05
-REGRESSION_COST_THRESHOLD=0.50
-```
+For full step-by-step instructions, see **[docs/connect_new_agent.md](file:///d:/Fxis.ai/Agent-Harness/docs/connect_new_agent.md)**.
 
 ---
 
-## 📊 Querying Results
+## Author & License
 
-### View Execution Trace
+Developed with ❤️ by **[saket0x07](https://github.com/saket0x07)** for advanced AI agent evaluation, trajectory tracing, and regression testing.
 
-```bash
-python scripts/view_traces.py --run-id run_2026_07_14_001 --format tree
-
-# Output:
-# trace_2026_07_14_001
-# ├── [LLM] OpenAI GPT-4 (412 tokens in, 88 out) [5.2ms] [$0.0031]
-# │   ├── [TOOL] grep_code (match: 3 results) [1.2ms] [$0.0000]
-# │   └── [TOOL] analyze_syntax (error) [0.8ms] [$0.0000]
-# └── [LLM] Claude Sonnet (200 tokens in, 45 out) [3.1ms] [$0.0018]
-```
-
-#### Execution Trace Visualization
-
-Get detailed insights into every step of your agent's execution with rich, hierarchical trace visualization:
-
-![Execution Trace Viewer](https://via.placeholder.com/1000x600?text=Trace+Viewer+Screenshot)
-
-The trace viewer displays:
-- **Node Name & Type** — Which component executed (LLM call, tool call, state transition)
-- **Latency** — Time taken for each step (helps identify bottlenecks)
-- **Token Usage** — Input/output tokens for LLM calls (track cost per step)
-- **Cost (USD)** — Granular cost breakdown
-- **Summary/Arguments** — Full context of what happened at each step
-- **Errors** — Detailed error messages if a step failed
-
-**Example usage:**
-```bash
-python scripts/view_traces.py \
-  --run-id run_interactive_1784186575 \
-  --format tree \
-  --task-id interactive_6eb663
-```
-
----
-
-### Interactive Evaluation with Judge Feedback
-
-Run agents interactively with real-time LLM-as-Judge scoring and trajectory analysis:
-
-![Interactive Evaluation](https://via.placeholder.com/1000x600?text=Interactive+Evaluation+Screenshot)
-
-The interactive mode provides:
-- **Real-time Configuration** — Select agent, version, and enable/disable judge
-- **Input Prompts** — Natural language task specification
-- **Execution Status** — Track API calls and wait for results
-- **Comprehensive Grading** — Deterministic checks + LLM judge scores
-- **Trajectory Auditing** — Failure mode detection (infinite loops, hallucinations, etc.)
-- **Judge Feedback** — Detailed critique of output quality, clarity, completeness
-
-**Example interactive session:**
-```bash
-python main.py interactive \
-  --agent blog_researcher_writer_agent \
-  --version v1.0-interactive \
-  --db data/harness.db
-
-# Prompts:
-# Enter the blog topic/title: "gen ai"
-# Enter target audience: "ai engineers"
-# Enter expected keywords: "evaluation,tracing,regression"
-
-# Output:
-# ✅ Execution Completed
-# Outcome: Passed
-# Latency: 295532ms | Cost: $0.00000
-# Trajectory Analysis: No failures detected
-# LLM Judge Score: Clarity: 5/5 | Accuracy: 5/5 | Completeness: 5/5
-```
-
----
-
-### Compare Two Agent Versions
-
-```bash
-python scripts/compare_versions.py \
-  --agent code_review_agent \
-  --version-a v1.0 \
-  --version-b v1.1
-
-# Output:
-# ┌─ Comparison: v1.0 vs v1.1 ──────┐
-# │ Metric                v1.0   v1.1  Δ     │
-# │ Success Rate          92%    83%   -9%   │
-# │ Avg Cost              $0.035 $0.052 +49% │
-# │ Avg Latency           2.4s   3.1s  +29%  │
-# │ Missed Issues         1      3     ↑     │
-# │ Infinite Loops        0      1     ↑     │
-# └────────────────────────────────────────┘
-```
-
-### Judge Calibration
-
-```bash
-python scripts/calibrate_judge.py \
-  --hand_graded_file data/calibration_set.json \
-  --judge_results data/judge_results.json
-
-# Output:
-# Judge-Human Agreement: 84%
-# Cohen's Kappa: 0.79
-# Status: APPROVED (≥80% threshold met)
-```
-
----
-
-## 🧪 Testing
-
-Run the test suite:
-
-```bash
-pytest tests/ -v
-
-# Run specific test module
-pytest tests/test_grading.py -v
-
-# Run with coverage
-pytest tests/ --cov=src --cov-report=html
-```
-
----
-
-## 📈 Success Criteria (v1)
-
-- [x] Adapter works for 2+ different agent architectures (LangGraph + raw loop)
-- [x] Judge-human agreement ≥ 80% on calibration set
-- [x] Regression detection catches manually-introduced regressions
-- [x] Full trace captured (100% of LLM/tool calls in trace store)
-- [x] Report generation (`MetricsReport` + regression status)
-
----
-
-## 🚀 Roadmap
-
-### Phase 1: MVP (Current)
-- ✅ Adapter layer + instrumentation
-- ✅ Task suite loading & execution
-- ✅ Deterministic grading
-- ✅ LLM-as-Judge implementation
-- ✅ Metrics aggregation & reporting
-- ✅ Regression detection
-
-### Phase 2: Observability (Completed)
-- [x] Interactive dashboard (Streamlit)
-- [x] Trace visualization
-- [x] Trend analysis across versions
-- [x] Judge calibration UI
-
-### Phase 3: Production Ready
-- REST API for remote runs
-- CI/CD integration (GitHub Actions, etc.)
-- Automatic baseline management
-- Alert on regression triggers
-
-### Phase 4: Advanced Analytics
-- Failure pattern clustering
-- Anomaly detection
-- Trajectory-based fine-tuning data export
-- RL reward signal generation
-
----
-
-## 💡 Key Insights
-
-> **The core value isn't in the first score—it's in catching when things get worse.**
-
-Regressions are silent. A prompt change that seems like an improvement can quietly reduce success rate by 10% across a test suite, and you won't notice until a user complains. This harness makes regressions visible and measurable.
-
-> **Judge the trajectory, not just the final output.**
-
-If an agent got the right answer but for the wrong reasons (hallucinated intermediate steps, missed a critical reasoning step), you need to know. Full trace grading surfaces this.
-
-> **Deterministic checks scale, LLM judge calibrates.**
-
-Use rules for anything objective (test pass/fail, schema validation, exact matches). Use the judge only for subjective quality—and only after calibrating against human labels.
-
----
-
-## 📝 License
-
-MIT License — See LICENSE file for details.
-
----
-
-## 👤 Author
-
-Built by [@saket0x07](https://github.com/saket0x07)
-
----
-
-## 🤝 Contributing
-
-Contributions welcome! To contribute:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Commit changes (`git commit -m "Add your feature"`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Open a Pull Request
-
----
-
-## 📞 Support
-
-For issues, questions, or feedback:
-- Open an issue on GitHub
-- Check the [PRD](prd.md) for detailed requirements
-- Review [changes_log.md](changes_log.md) for recent updates
-
----
-
-**Last Updated:** July 16, 2026  
-**Status:** Active Development (MVP Phase)
+Distributed under the **MIT License**.

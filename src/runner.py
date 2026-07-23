@@ -34,6 +34,7 @@ from src.adapters.blog_writer import BlogWriterAdapter
 from src.adapters.blog_writer_api import BlogWriterAPIAdapter
 from src.adapters.drs_adapter import DRSAdapter
 from src.storage.db import init_db, save_run, save_trace_events, save_grading_result
+from src.adapters.agentic_hiring_adapter import AgenticHiringAdapter
 
 # Registry of available agent adapters
 ADAPTER_REGISTRY = {
@@ -41,7 +42,9 @@ ADAPTER_REGISTRY = {
     "blog_researcher_writer_agent_local": BlogWriterAdapter,
     "mock": MockAgentAdapter,
     "drs": DRSAdapter,
-    "drs_agent": DRSAdapter
+    "drs_agent": DRSAdapter,
+    "agentic_hiring_workflow": AgenticHiringAdapter,
+    "hiring_agent": AgenticHiringAdapter
 }
 
 def execute_suite(
